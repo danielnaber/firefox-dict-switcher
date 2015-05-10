@@ -564,7 +564,7 @@
       function createKnownModel(key) {
         // Check if known model has been pre-computed in cache
         if (knownModelCache[key]) {
-          console.log("foo");
+          //console.log("foo");
           return knownModelCache[key];
         }
 

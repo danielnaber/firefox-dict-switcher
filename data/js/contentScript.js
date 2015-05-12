@@ -14,6 +14,9 @@ function handleKeyDown(evt) {
                 // lets set the language as the one that we have detected
                 evt.target.lang = language;
 
+                // Tell the main script to switch dictionary to the one that is there for this language.
+                self.port.emit("changeDictionary", language);
+
                 // now lets reset the spell checker so that it will check based on the detected language.
                 evt.target.spellcheck = false;
                 evt.target.spellcheck = true;

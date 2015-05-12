@@ -6,32 +6,12 @@
   "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
   "author": "danielnaber",
   "contributors" : [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)" ],
-  "license": "MPL 2.0",
+  "license": "Apache-2.0",
   "version": "0.3",
   "preferences": [{
     "name": "addPreferedDictionary",
     "type": "control",
     "title": "Prefered Dictionary",
     "label": "Add"
-  },
-  {
-    "name": "typeOfBreath",
-    "type": "menulist",
-    "title": "Type of breath",
-    "value": 0,
-    "options": [
-        {
-            "value": "0",
-            "label": "Fire"
-        },
-        {
-            "value": "1",
-            "label": "Cold"
-        },
-        {
-            "value": "2",
-            "label": "Disintegration"
-        }
-    ]
   }]
 }

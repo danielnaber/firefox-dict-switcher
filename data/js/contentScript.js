@@ -28,8 +28,8 @@ function detectAndSetLanguage(targetElement){
             self.port.emit("changeDictionary", language);
 
             // now lets reset the spell checker so that it will check based on the detected language.
-            targetElement.spellcheck = false;
-            targetElement.spellcheck = true;
+            // targetElement.spellcheck = false;
+            // targetElement.spellcheck = true;
         });
     }
 

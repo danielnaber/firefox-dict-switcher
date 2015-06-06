@@ -12,14 +12,24 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-var minimum_character_length = 25;
+const minimum_character_length = 25;
 
-function detectAndSetLanguage(targetElement){
+function detectAndSetLanguage(targetElement, text)
+{
+    // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
+    // the element itself
+    text = text || targetElement.value;
+
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
-    if (targetElement.value.length > minimum_character_length) {
+    if(text.length > minimum_character_length)
+    {
+        let startTime = performance.now();
+
         // Looks like we have enough text to reliably detect the language.
-        guessLanguage.detect(targetElement.value, function(language) {
+        guessLanguage.detect(text, function (language)
+        {
+            console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
             // lets set the language as the one that we have detected
             targetElement.lang = language;
@@ -32,30 +42,50 @@ function detectAndSetLanguage(targetElement){
             // targetElement.spellcheck = true;
         });
     }
-
 }
 
-function handleKeyDown(evt) {
+function handleKeyDown(evt)
+{
     var key = evt.keyCode || evt.charCode;
 
     // check if user has finished entering a word
-    if (key == 32) {
+    if(key == 32)
+    {
         detectAndSetLanguage(evt.target);
     }
 }
 
 // Set correct language when we set the focus to already filled textarea
-function handleFocus(evt) {
+function handleFocus(evt)
+{
     detectAndSetLanguage(evt.target);
 }
 
-function initialize(){
-    var textareas = document.querySelectorAll("textarea");
-    
-    for (var i = 0; i < textareas.length; i++ ) {
-        textareas[i].addEventListener('keydown', handleKeyDown);
-        textareas[i].addEventListener('focus', handleFocus);
-    }
-}
+//var textareas = document.querySelectorAll("textarea");
 
-initialize();
+//for (var i = 0; i < textareas.length; i++ ) {
+//    textareas[i].addEventListener('keydown', handleKeyDown);
+//    textareas[i].addEventListener('focus', handleFocus);
+//}
+// Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead
+// used event delegation by attaching event handlers only to the root element. This is better for performance
+// and covers the elements that are later appended to the DOM
+document.documentElement.addEventListener("keydown", handleKeyDown);
+
+// HACK: The focus event doesn't bubble, so I set the useCapture parameter of addEventListener to true.
+// We should use the focusin event which bubbles but it's not supported on Firefox as of the date I wrote this.
+// See the note on this article https://developer.mozilla.org/en-US/docs/Web/Events/focusin
+document.documentElement.addEventListener("focus", handleFocus, true);
+
+document.documentElement.addEventListener("paste", function (e)
+{
+    // We act only when data is pasted on a TEXTAREA element
+    if(e.target.tagName == "TEXTAREA")
+    {
+        // We try to detect only if the pasted data is available in plain text format
+        let text = e.clipboardData.getData("text/plain");
+
+        if(text)
+            detectAndSetLanguage(e.target, text);
+    }
+});

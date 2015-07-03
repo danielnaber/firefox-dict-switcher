@@ -1,17 +1,25 @@
 {
-  "name": "firefox-dict-switcher",
-  "title": "Firefox Dictionary Switcher",
-  "id": "jid1-A8L2rqPLdhF3IA",
-  "icon": "data/img/dictionary.png",
-  "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
-  "author": "danielnaber",
-  "contributors" : [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)" ],
-  "license": "Apache-2.0",
-  "version": "0.4",
-  "preferences": [{
-    "name": "addPreferedDictionary",
-    "type": "control",
-    "title": "Prefered Dictionary",
-    "label": "Add"
-  }]
+    "name": "firefox-dict-switcher",
+    "title": "Firefox Dictionary Switcher",
+    "id": "firefox-dict-switcher",
+    "icon": "data/img/dictionary.png",
+    "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
+    "author": "danielnaber",
+    "contributors": [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)" ],
+    "license": "Apache-2.0",
+    "version": "0.4",
+    "preferences": [
+        {
+            "name": "editPreferedDictionary",
+            "type": "control",
+            "title": "Preferred dictionaries",
+            "label": "Manage"
+        },
+        {
+            "name": "preferences",
+            "type": "string",
+            "title": "Preferred dictionaries",
+            "hidden": true
+        }
+    ]
 }

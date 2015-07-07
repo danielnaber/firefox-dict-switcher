@@ -12,10 +12,22 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-const minimum_character_length = 25;
+// Note by Ashraf: I set this constant to 1 after it was 25 to enable continuous language guessing and try to
+// provide best results to users
+const minimum_character_length = 1;
 
 function detectAndSetLanguage(targetElement, text)
 {
+    // If spell checking was disabled by the page developer, we honor the setting and don't set the value of
+    // the spellcheck attribute to true, but we still try to detect the language and keep the ordinary operation
+    // of the addon because the user can manually enable spell checking from the context menu, and the spellcheck
+    // attribute stays false.
+    // I set the developerDisabledSpellChecking to indicate this case
+    // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
+    // I use === because I'm not sure if this attribute accepts only booleans
+    let developerDisabledSpellChecking = targetElement.spellcheck === false &&
+                                         !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
+
     // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
     // the element itself
     text = text || targetElement.value || targetElement.textContent;
@@ -24,28 +36,57 @@ function detectAndSetLanguage(targetElement, text)
     // that will increase our chances of detecting language correctly.
     if(text.length > minimum_character_length)
     {
-        let startTime = performance.now();
+        //let startTime = performance.now();
 
         // Looks like we have enough text to reliably detect the language.
         guessLanguage.detect(text, function (language)
         {
-            console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
+            //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-            // lets set the language as the one that we have detected
-            targetElement.lang = language;
+            if(language == "unknown")
+            {
+                // If the language wasn't successfully identified, disable spell checking…
+                targetElement.spellcheck = false;
 
-            // Tell the main script to switch dictionary to the one that is there for this language.
-            self.port.emit("changeDictionary", language);
+                // …send null to indicate that to the main script…
+                self.port.emit("changeDictionary", null);
 
-            // now lets reset the spell checker so that it will check based on the detected language.
-            // targetElement.spellcheck = false;
-            // targetElement.spellcheck = true;
+                // …and set a flag to indicate that it's our code who disabled spell checking not the page developer's
+                // We do so only if the attribute wasn't already set to false be the page developer
+                if(!developerDisabledSpellChecking)
+                    targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
+            }
+            else
+            {
+                // If the language was detected successfully enable specll checking and send its code to the main script
+                if(!developerDisabledSpellChecking)
+                {
+                    // We enable spell checking only if the attribute wasn't already set to false be the page developer
+                    targetElement.spellcheck = true;
+                }
+
+                self.port.emit("changeDictionary", language);
+            }
         });
+    }
+    else
+    {
+        // Because we can't detect the language, disable spell checking
+        targetElement.spellcheck = false;
+
+        // Sending null to the main script also indicates that the input text is too short to detect the language
+        self.port.emit("changeDictionary", null);
+
+        // And set a flag to indicate that it's our code who disabled spell checking not the page developer's
+        // We do so only if the attribute wasn't already set to false be the page developer
+        if(!developerDisabledSpellChecking)
+            targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
     }
 }
 
 function isEligible(element)
 {
+    // The addon operates only on textarea elements or elements with the contenteditable attribute set
     return element.tagName == "TEXTAREA" ||
            element.contentEditable;
 }

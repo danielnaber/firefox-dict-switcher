@@ -5,7 +5,9 @@
     "icon": "data/img/dictionary.png",
     "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
     "author": "danielnaber",
-    "contributors": [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)" ],
+    "contributors": [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
+                      "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
+    ],
     "license": "Apache-2.0",
     "version": "0.4",
     "preferences": [

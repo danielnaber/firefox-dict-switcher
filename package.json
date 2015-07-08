@@ -5,12 +5,65 @@
     "icon": "data/img/dictionary.png",
     "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
     "author": "danielnaber",
-    "contributors": [ "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
-                      "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
+    "contributors": [
+        "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
+        "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
     ],
     "license": "Apache-2.0",
     "version": "0.4",
     "preferences": [
+        {
+            "name": "english",
+            "title": "English variant",
+            "description": "This is the English dictionary that will be used by the addon for spell checking English texts",
+            "type": "menulist",
+            "value": "en-US",
+            "options": [
+                {
+                    "value": "en-US",
+                    "label": "English (United States)"
+                },
+                {
+                    "value": "en-GB",
+                    "label": "English (Great Britain)"
+                }
+            ]
+        },
+        {
+            "name": "german",
+            "title": "German variant",
+            "description": "This is the German dictionary that will be used by the addon for spell checking German texts",
+            "type": "menulist",
+            "value": "de-DE",
+            "options": [
+                {
+                    "value": "de-DE",
+                    "label": "German (Germany)"
+                },
+                {
+                    "value": "de-AT",
+                    "label": "German (Austria)"
+                }
+            ]
+        },
+        {
+            "name": "portuguese",
+            "title": "Portuguese variant",
+            "description": "This is the Portuguese dictionary that will be used by the addon for spell checking Portuguese texts",
+            "type": "menulist",
+            "value": "pt-BR",
+            "options": [
+                {
+                    "value": "pt-BR",
+                    "label": "Portuguese (Brazil)"
+                },
+                {
+                    "value": "pt-PT",
+                    "label": "Portuguese (Portugal)"
+                }
+            ]
+        },
+
         {
             "name": "editPreferedDictionary",
             "type": "control",

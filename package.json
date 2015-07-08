@@ -4,7 +4,7 @@
     "id": "firefox-dict-switcher@danielnaber.de",
     "icon": "data/img/dictionary.png",
     "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
-    "author": "danielnaber",
+    "author": "Daniel Naber",
     "contributors": [
         "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
         "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
@@ -15,51 +15,71 @@
         {
             "name": "english",
             "title": "English variant",
-            "description": "This is the English dictionary that will be used by the addon for spell checking English texts",
+            "description": "The dictionary that will be used for spell checking English texts",
             "type": "menulist",
             "value": "en-US",
             "options": [
                 {
                     "value": "en-US",
-                    "label": "English (United States)"
+                    "label": "United States"
                 },
                 {
                     "value": "en-GB",
-                    "label": "English (Great Britain)"
+                    "label": "Great Britain"
+                },
+                {
+                    "value": "en-ZA",
+                    "label": "South Africa"
+                },
+                {
+                    "value": "en-CA",
+                    "label": "Canada"
+                },
+                {
+                    "value": "en-AU",
+                    "label": "Australia"
+                },
+                {
+                    "value": "en-NZ",
+                    "label": "New Zealand"
                 }
             ]
         },
         {
             "name": "german",
             "title": "German variant",
-            "description": "This is the German dictionary that will be used by the addon for spell checking German texts",
+            "description": "The dictionary that will be used for spell checking German texts",
             "type": "menulist",
             "value": "de-DE",
             "options": [
                 {
                     "value": "de-DE",
-                    "label": "German (Germany)"
+                    "label": "Germany"
                 },
                 {
                     "value": "de-AT",
-                    "label": "German (Austria)"
+                    "label": "Austria"
+                },
+                {
+                    "value": "de-CH",
+                    "label": "Switzerland"
                 }
             ]
         },
         {
             "name": "portuguese",
             "title": "Portuguese variant",
-            "description": "This is the Portuguese dictionary that will be used by the addon for spell checking Portuguese texts",
+            "description": "The dictionary that will be used for spell checking Portuguese texts",
             "type": "menulist",
             "value": "pt-BR",
             "options": [
                 {
                     "value": "pt-BR",
-                    "label": "Portuguese (Brazil)"
+                    "label": "Brazil"
                 },
                 {
                     "value": "pt-PT",
-                    "label": "Portuguese (Portugal)"
+                    "label": "Portugal"
                 }
             ]
         },

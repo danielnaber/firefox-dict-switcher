@@ -43,6 +43,15 @@ function detectAndSetLanguage(targetElement, text)
     // the element itself
     text = text || targetElement.value || targetElement.textContent;
 
+    if (userPreferences['ignoreSignature']) {
+        let signatureDelimiterPos = text.indexOf("-- \n");
+        if (signatureDelimiterPos !== -1) {
+            // cut off signature: it may be written in a different language than
+            // the main text and would thus decrease language detection quality:
+            text = text.substring(0, signatureDelimiterPos);
+        }
+    }
+
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
     if(text.length > minimum_character_length)

@@ -94,6 +94,13 @@
                     "label": "Don't detect this language"
                 }
             ]
+        },
+        {
+            "name": "ignoreSignature",
+            "title": "Ignore signatures",
+            "description": "Ignore text after the signature delimiter ('-- \\n'). Useful for writing emails.",
+            "type": "bool",
+            "value": true
         }
     ]
 }

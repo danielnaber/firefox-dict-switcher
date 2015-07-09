@@ -71,20 +71,20 @@ function detectAndSetLanguage(targetElement, text)
             // language (see the configs in package.json)
             if(language == "unknown" || userPreferences[languageOnlyCode] == "-")
             {
-                // Disable spell checking�
+                // Disable spell checking
                 targetElement.spellcheck = false;
 
-                // �send null to indicate that to the main script�
+                // send null to indicate that to the main script
                 self.port.emit("changeDictionary", null);
 
-                // �and set a flag to indicate that it's our code who disabled spell checking not the page developer's
+                // and set a flag to indicate that it's our code who disabled spell checking not the page developer's
                 // We do so only if the attribute wasn't already set to false be the page developer
                 if(!developerDisabledSpellChecking)
                     targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
             }
             else
             {
-                // If the language was detected successfully enable specll checking and send its code to the main script
+                // If the language was detected successfully enable spell checking and send its code to the main script
                 if(!developerDisabledSpellChecking)
                 {
                     // We enable spell checking only if the attribute wasn't already set to false be the page developer

@@ -16,6 +16,17 @@
 // provide best results to users
 const minimum_character_length = 1;
 
+// Variable to store user preferences
+let userPreferences;
+
+// Listen to a message from the main script containing user preferences
+self.port.on("config", function (prefs)
+{
+    // We require the presence of user preferences just to know the languages for which the user chosen "Don't
+    // detect this language" option so that we disable spell checking if we encountered text in these languages
+    userPreferences = prefs;
+});
+
 function detectAndSetLanguage(targetElement, text)
 {
     // If spell checking was disabled by the page developer, we honor the setting and don't set the value of
@@ -41,11 +52,17 @@ function detectAndSetLanguage(targetElement, text)
         // Looks like we have enough text to reliably detect the language.
         guessLanguage.detect(text, function (language)
         {
+            // The index of the dash character (-) in the language code (ex for en-US this will be 2)
+            let dashIndex = language.indexOf("-"),
+                languageOnlyCode = dashIndex < 0 ? language : language.substr(0, dashIndex);
+
             //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-            if(language == "unknown")
+            // If the language wasn't successfully identified, or the user chose to not detect the detected
+            // language (see the configs in package.json)
+            if(language == "unknown" || userPreferences[languageOnlyCode] == "-")
             {
-                // If the language wasn't successfully identified, disable spell checking…
+                // Disable spell checking…
                 targetElement.spellcheck = false;
 
                 // …send null to indicate that to the main script…

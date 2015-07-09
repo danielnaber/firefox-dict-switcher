@@ -13,7 +13,7 @@
     "version": "0.4",
     "preferences": [
         {
-            "name": "english",
+            "name": "en",
             "title": "English variant",
             "description": "The dictionary that will be used for spell checking English texts",
             "type": "menulist",
@@ -42,11 +42,15 @@
                 {
                     "value": "en-NZ",
                     "label": "New Zealand"
+                },
+                {
+                    "value": "-",
+                    "label": "Don't detect this language"
                 }
             ]
         },
         {
-            "name": "german",
+            "name": "de",
             "title": "German variant",
             "description": "The dictionary that will be used for spell checking German texts",
             "type": "menulist",
@@ -63,11 +67,15 @@
                 {
                     "value": "de-CH",
                     "label": "Switzerland"
+                },
+                {
+                    "value": "-",
+                    "label": "Don't detect this language"
                 }
             ]
         },
         {
-            "name": "portuguese",
+            "name": "pt",
             "title": "Portuguese variant",
             "description": "The dictionary that will be used for spell checking Portuguese texts",
             "type": "menulist",
@@ -80,21 +88,12 @@
                 {
                     "value": "pt-PT",
                     "label": "Portugal"
+                },
+                {
+                    "value": "-",
+                    "label": "Don't detect this language"
                 }
             ]
-        },
-
-        {
-            "name": "editPreferedDictionary",
-            "type": "control",
-            "title": "Preferred dictionaries",
-            "label": "Manage"
-        },
-        {
-            "name": "preferences",
-            "type": "string",
-            "title": "Preferred dictionaries",
-            "hidden": true
         }
     ]
 }

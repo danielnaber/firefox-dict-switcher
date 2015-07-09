@@ -66,23 +66,6 @@
                 }
             ]
         },
-        {
-            "name": "portuguese",
-            "title": "Portuguese variant",
-            "description": "The dictionary that will be used for spell checking Portuguese texts",
-            "type": "menulist",
-            "value": "pt-BR",
-            "options": [
-                {
-                    "value": "pt-BR",
-                    "label": "Brazil"
-                },
-                {
-                    "value": "pt-PT",
-                    "label": "Portugal"
-                }
-            ]
-        },
 
         {
             "name": "editPreferedDictionary",

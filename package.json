@@ -50,6 +50,35 @@
             ]
         },
         {
+            "name": "es",
+            "title": "Spanish variant",
+            "description": "The dictionary that will be used for spell checking Spanish texts",
+            "type": "menulist",
+            "value": "es-ES",
+            "options": [
+                {
+                    "value": "es-ES",
+                    "label": "Spain"
+                },
+                {
+                    "value": "es-MX",
+                    "label": "Mexico"
+                },
+                {
+                    "value": "es-AR",
+                    "label": "Argentina"
+                },
+                {
+                    "value": "es-CL",
+                    "label": "Chile"
+                },
+                {
+                    "value": "-",
+                    "label": "Don't detect this language"
+                }
+            ]
+        },
+        {
             "name": "de",
             "title": "German variant",
             "description": "The dictionary that will be used for spell checking German texts",

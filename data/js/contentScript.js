@@ -62,13 +62,13 @@ function detectAndSetLanguage(targetElement, text)
             // language (see the configs in package.json)
             if(language == "unknown" || userPreferences[languageOnlyCode] == "-")
             {
-                // Disable spell checking…
+                // Disable spell checkingï¿½
                 targetElement.spellcheck = false;
 
-                // …send null to indicate that to the main script…
+                // ï¿½send null to indicate that to the main scriptï¿½
                 self.port.emit("changeDictionary", null);
 
-                // …and set a flag to indicate that it's our code who disabled spell checking not the page developer's
+                // ï¿½and set a flag to indicate that it's our code who disabled spell checking not the page developer's
                 // We do so only if the attribute wasn't already set to false be the page developer
                 if(!developerDisabledSpellChecking)
                     targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
@@ -118,7 +118,7 @@ document.documentElement.addEventListener("keydown", function (evt)
         var key = evt.keyCode || evt.charCode;
 
         // check if user has finished entering a word
-        if(key == 32)
+        if(key == 32/*space*/ || key == 188/*comma*/ || key == 190/*dot*/)
         {
             detectAndSetLanguage(evt.target);
         }

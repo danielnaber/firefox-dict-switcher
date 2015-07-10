@@ -1,6 +1,6 @@
 {
     "name": "firefox-dict-switcher",
-    "title": "Firefox Dictionary Switcher",
+    "title": "Automatic Dictionary Switcher",
     "id": "firefox-dict-switcher@danielnaber.de",
     "icon": "data/img/dictionary.png",
     "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",

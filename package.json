@@ -3,7 +3,7 @@
     "title": "Automatic Dictionary Switcher",
     "id": "firefox-dict-switcher@danielnaber.de",
     "icon": "data/img/dictionary.png",
-    "description": "Based on the text entered in a textarea, this addon automatically detects the language and sets the corresponding spell checking dictionary.",
+    "description": "Based on the text entered in a textarea, this add-on automatically detects the language and sets the corresponding spell checking dictionary. You need to type at least 20 characters before the add-on will start. Before that limit is reached, it disables spell checking.",
     "author": "Daniel Naber",
     "contributors": [
         "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",

@@ -19,6 +19,9 @@ const minimum_character_length = 1;
 // Variable to store user preferences
 let userPreferences;
 
+// A div that shows feedback of detected language:
+let feedbackDiv;
+
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
 {
@@ -71,6 +74,15 @@ function detectAndSetLanguage(targetElement, text)
             // language (see the configs in package.json)
             if(language == "unknown" || userPreferences[languageOnlyCode] == "-")
             {
+                if(language == "unknown")
+                {
+                    showFeedback(targetElement, "...", "Need more characters to detect language");
+                }
+                else
+                {
+                    showFeedback(targetElement, "--", "Detected " + languageOnlyCode + " but it's disabled in configuration");
+                }
+
                 // Disable spell checking
                 targetElement.spellcheck = false;
 
@@ -84,6 +96,9 @@ function detectAndSetLanguage(targetElement, text)
             }
             else
             {
+                // TODO: show language code including variant here:
+                showFeedback(targetElement, language, "");
+                
                 // If the language was detected successfully enable spell checking and send its code to the main script
                 if(!developerDisabledSpellChecking)
                 {
@@ -110,11 +125,36 @@ function detectAndSetLanguage(targetElement, text)
     }
 }
 
+function showFeedback(element, feedbackText, feedbackTitle)
+{
+    // TODO: this doesn't adapt its position when the textarea is resized
+    if (feedbackDiv)
+    {
+        feedbackDiv.parentNode.removeChild(feedbackDiv);
+    }
+    let feedbackWidth = 20;
+    let feedbackHeight = 12;
+    let leftPos = element.offsetLeft + element.offsetWidth - feedbackWidth - 25;
+    let topPos = element.offsetTop + element.offsetHeight - feedbackHeight - 12;
+    let feedbackNode = document.createElement("div");
+    feedbackNode.title = feedbackTitle;
+    feedbackNode.style.cssText =
+        "position:absolute; left: " + leftPos + "px; top:" + topPos + "px;" +
+        "width:" + feedbackWidth + "px; height:" + feedbackHeight + "px;" +
+        "background-color:#bcb1ff; color:white; opacity:0.9;" +
+        "font-family:sans-serif; font-size:11px; font-weight:bold;" +
+        "padding:4px; border-radius:4px";
+    var textNode = document.createTextNode(feedbackText);
+    feedbackNode.appendChild(textNode);
+    element.parentNode.appendChild(feedbackNode);
+    feedbackDiv = feedbackNode;
+}
+
 function isEligible(element)
 {
     // The addon operates only on textarea elements or elements with the contenteditable attribute set
     return element.tagName == "TEXTAREA" ||
-           element.contentEditable;
+           element.contentEditable === 'true';   // TODO: this can be 'inherit', we need the real value
 }
 
 // Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead

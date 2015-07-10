@@ -12,13 +12,12 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-exports["test main"] = function(assert) {
-  assert.pass("Unit test running!");
-};
+var main = require("./main");
 
-exports["test main async"] = function(assert, done) {
-  assert.pass("async Unit test running!");
-  done();
+exports["test main 1"] = function(assert) {
+  main.initializeDictPreference();
+  var dicts = main.parseAvailableDictionaries();
+  assert.ok(Object.keys(dicts).length > 0, "got available dictionaries");
 };
 
 require("sdk/test").run(exports);

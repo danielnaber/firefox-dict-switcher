@@ -37,15 +37,15 @@ function detectAndSetLanguage(targetElement, text)
     // I set the developerDisabledSpellChecking to indicate this case
     // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
     // I use === because I'm not sure if this attribute accepts only booleans
-    let developerDisabledSpellChecking = targetElement.spellcheck === false &&
-                                         !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
+    const developerDisabledSpellChecking = targetElement.spellcheck === false &&
+                                          !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
     // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
     // the element itself
     text = text || targetElement.value || targetElement.textContent;
 
     if (userPreferences['ignoreSignature']) {
-        let signatureDelimiterPos = text.indexOf("-- \n");
+        const signatureDelimiterPos = text.indexOf("-- \n");
         if (signatureDelimiterPos !== -1) {
             // cut off signature: it may be written in a different language than
             // the main text and would thus decrease language detection quality:
@@ -57,14 +57,14 @@ function detectAndSetLanguage(targetElement, text)
     // that will increase our chances of detecting language correctly.
     if(text.length > minimum_character_length)
     {
-        //let startTime = performance.now();
+        //const startTime = performance.now();
 
         // Looks like we have enough text to reliably detect the language.
         guessLanguage.detect(text, function (language)
         {
             // The index of the dash character (-) in the language code (ex for en-US this will be 2)
-            let dashIndex = language.indexOf("-"),
-                languageOnlyCode = dashIndex < 0 ? language : language.substr(0, dashIndex);
+            const dashIndex = language.indexOf("-"),
+                  languageOnlyCode = dashIndex < 0 ? language : language.substr(0, dashIndex);
 
             //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
@@ -131,9 +131,9 @@ function showFeedback(element, feedbackText, feedbackTitle)
     {
         feedbackDiv.parentNode.removeChild(feedbackDiv);
     }
-    let leftPos = element.offsetLeft + element.offsetWidth - 43;
-    let topPos = element.offsetTop + element.offsetHeight - 20;
-    let feedbackNode = document.createElement("div");
+    const leftPos = element.offsetLeft + element.offsetWidth - 43;
+    const topPos = element.offsetTop + element.offsetHeight - 20;
+    const feedbackNode = document.createElement("div");
     feedbackNode.title = feedbackTitle;
     feedbackNode.style.position = "absolute";
     feedbackNode.style.left = leftPos + "px";
@@ -147,7 +147,7 @@ function showFeedback(element, feedbackText, feedbackTitle)
     feedbackNode.style.paddingLeft = "4px";
     feedbackNode.style.paddingRight = "4px";
     feedbackNode.style.borderRadius = "4px";
-    var textNode = document.createTextNode(feedbackText);
+    const textNode = document.createTextNode(feedbackText);
     feedbackNode.appendChild(textNode);
     element.parentNode.appendChild(feedbackNode);
     feedbackDiv = feedbackNode;
@@ -158,8 +158,8 @@ function showFeedback(element, feedbackText, feedbackTitle)
         feedbackNode.style.display = "none";  // don't show at old position while textarea is being resized
     };
     element.onmouseup = function(evt) {
-        let leftPos = element.offsetLeft + element.offsetWidth - 43;
-        let topPos = element.offsetTop + element.offsetHeight - 20;
+        const leftPos = element.offsetLeft + element.offsetWidth - 43;
+        const topPos = element.offsetTop + element.offsetHeight - 20;
         feedbackNode.style.display = "inline";
         feedbackNode.style.left = leftPos + "px";
         feedbackNode.style.top = topPos + "px";
@@ -206,7 +206,7 @@ document.documentElement.addEventListener("paste", function (e)
     if(isEligible(e.target))
     {
         // We try to detect only if the pasted data is available in plain text format
-        let text = e.clipboardData.getData("text/plain");
+        const text = e.clipboardData.getData("text/plain");
 
         if(text)
             detectAndSetLanguage(e.target, text);

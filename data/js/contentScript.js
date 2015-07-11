@@ -140,7 +140,6 @@ function showFeedback(element, feedbackText, feedbackTitle)
     feedbackNode.title = feedbackTitle;
     feedbackNode.style.cssText =
         "position:absolute; left: " + leftPos + "px; top:" + topPos + "px;" +
-        "width:" + feedbackWidth + "px; height:" + feedbackHeight + "px;" +
         "background-color:#bcb1ff; color:white; opacity:0.9;" +
         "font-family:sans-serif; font-size:11px; font-weight:bold;" +
         "padding:4px; border-radius:4px";

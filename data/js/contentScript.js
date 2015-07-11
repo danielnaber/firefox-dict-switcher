@@ -135,10 +135,8 @@ function showFeedback(element, feedbackText, feedbackTitle)
     {
         feedbackDiv.parentNode.removeChild(feedbackDiv);
     }
-    let feedbackWidth = 20;
-    let feedbackHeight = 12;
-    let leftPos = element.offsetLeft + element.offsetWidth - feedbackWidth - 23;
-    let topPos = element.offsetTop + element.offsetHeight - feedbackHeight - 8;
+    let leftPos = element.offsetLeft + element.offsetWidth - 43;
+    let topPos = element.offsetTop + element.offsetHeight - 20;
     let feedbackNode = document.createElement("div");
     feedbackNode.title = feedbackTitle;
     feedbackNode.style.position = "absolute";

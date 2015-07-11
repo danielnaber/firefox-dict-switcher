@@ -127,10 +127,6 @@ function detectAndSetLanguage(targetElement, text)
 
 function showFeedback(element, feedbackText, feedbackTitle)
 {
-    // TODO: this doesn't adapt its position when the textarea is resized
-    //element.addEventListener("resize", function(evt) {
-    //    console.log("resized!"); // why is this never called?
-    //});
     if (feedbackDiv)
     {
         feedbackDiv.parentNode.removeChild(feedbackDiv);
@@ -155,6 +151,19 @@ function showFeedback(element, feedbackText, feedbackTitle)
     feedbackNode.appendChild(textNode);
     element.parentNode.appendChild(feedbackNode);
     feedbackDiv = feedbackNode;
+    // 'Resize' doesn't properly work on textareas, also
+    // see http://stackoverflow.com/questions/5570390/resize-event-for-textarea
+    // TODO: we need another resize listener for the case the texarea is resized because its containing element (e.g. the browser window) is resized
+    element.onmousedown = function(evt) {
+        feedbackNode.style.display = "none";  // don't show at old position while textarea is being resized
+    };
+    element.onmouseup = function(evt) {
+        let leftPos = element.offsetLeft + element.offsetWidth - 43;
+        let topPos = element.offsetTop + element.offsetHeight - 20;
+        feedbackNode.style.display = "inline";
+        feedbackNode.style.left = leftPos + "px";
+        feedbackNode.style.top = topPos + "px";
+    };
 }
 
 function isEligible(element)

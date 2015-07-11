@@ -134,15 +134,21 @@ function showFeedback(element, feedbackText, feedbackTitle)
     }
     let feedbackWidth = 20;
     let feedbackHeight = 12;
-    let leftPos = element.offsetLeft + element.offsetWidth - feedbackWidth - 25;
-    let topPos = element.offsetTop + element.offsetHeight - feedbackHeight - 12;
+    let leftPos = element.offsetLeft + element.offsetWidth - feedbackWidth - 23;
+    let topPos = element.offsetTop + element.offsetHeight - feedbackHeight - 14;
     let feedbackNode = document.createElement("div");
     feedbackNode.title = feedbackTitle;
-    feedbackNode.style.cssText =
-        "position:absolute; left: " + leftPos + "px; top:" + topPos + "px;" +
-        "background-color:#bcb1ff; color:white; opacity:0.9;" +
-        "font-family:sans-serif; font-size:11px; font-weight:bold;" +
-        "padding:4px; border-radius:4px";
+    feedbackNode.style.position = "absolute";
+    feedbackNode.style.left = leftPos + "px";
+    feedbackNode.style.top = topPos + "px";
+    feedbackNode.style.backgroundColor = "#bcb1ff";
+    feedbackNode.style.color = "white";
+    feedbackNode.style.opacity = 0.9;
+    feedbackNode.style.fontFamily = "sans-serif";
+    feedbackNode.style.fontSize = "11px";
+    feedbackNode.style.fontWeight = "bold";
+    feedbackNode.style.padding = "4px";
+    feedbackNode.style.borderRadius = "4px";
     var textNode = document.createTextNode(feedbackText);
     feedbackNode.appendChild(textNode);
     element.parentNode.appendChild(feedbackNode);

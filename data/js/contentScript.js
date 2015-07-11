@@ -12,9 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// Note by Ashraf: I set this constant to 1 after it was 25 to enable continuous language guessing and try to
-// provide best results to users
-const minimum_character_length = 1;
+const minimum_character_length = 25;
 
 // Variable to store user preferences
 let userPreferences;
@@ -112,6 +110,8 @@ function detectAndSetLanguage(targetElement, text)
     }
     else
     {
+        showFeedback(targetElement, "...", "Need more characters to detect language");
+        
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
 

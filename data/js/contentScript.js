@@ -128,6 +128,9 @@ function detectAndSetLanguage(targetElement, text)
 function showFeedback(element, feedbackText, feedbackTitle)
 {
     // TODO: this doesn't adapt its position when the textarea is resized
+    //element.addEventListener("resize", function(evt) {
+    //    console.log("resized!"); // why is this never called?
+    //});
     if (feedbackDiv)
     {
         feedbackDiv.parentNode.removeChild(feedbackDiv);

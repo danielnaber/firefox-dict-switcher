@@ -17,10 +17,10 @@
 const minimum_character_length = 1;
 
 // Variable to store user preferences
-let userPreferences;
-
-// A div that shows feedback of detected language:
-let feedbackDiv;
+let userPreferences,
+    // A div that shows feedback of detected language:
+    feedbackDiv,
+    ignoreSignature;
 
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
@@ -28,6 +28,7 @@ self.port.on("config", function (prefs)
     // We require the presence of user preferences just to know the languages for which the user chosen "Don't
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
+    ignoreSignature = userPreferences["ignoreSignature"];
 });
 
 function detectAndSetLanguage(targetElement, text)
@@ -46,9 +47,12 @@ function detectAndSetLanguage(targetElement, text)
     // the element itself
     text = text || targetElement.value || targetElement.textContent;
 
-    if (userPreferences['ignoreSignature']) {
+    if(ignoreSignature)
+    {
         let signatureDelimiterPos = text.indexOf("-- \n");
-        if (signatureDelimiterPos !== -1) {
+
+        if(signatureDelimiterPos >= 0)
+        {
             // cut off signature: it may be written in a different language than
             // the main text and would thus decrease language detection quality:
             text = text.substring(0, signatureDelimiterPos);

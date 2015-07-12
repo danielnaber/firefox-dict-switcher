@@ -12,13 +12,11 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// Note by Ashraf: I set this constant to 1 after it was 25 to enable continuous language guessing and try to
-// provide best results to users
-const minimum_character_length = 1;
+const minimum_character_length = 25;
 
 // Variable to store user preferences
 let userPreferences,
-    // A div that shows feedback of detected language:
+// A div that shows feedback of detected language:
     feedbackDiv,
     ignoreSignature;
 
@@ -40,7 +38,7 @@ function detectAndSetLanguage(targetElement, text)
     // I set the developerDisabledSpellChecking to indicate this case
     // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
     // I use === because I'm not sure if this attribute accepts only booleans
-    let developerDisabledSpellChecking = targetElement.spellcheck === false &&
+    const developerDisabledSpellChecking = targetElement.spellcheck === false &&
                                          !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
     // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
@@ -63,13 +61,13 @@ function detectAndSetLanguage(targetElement, text)
     // that will increase our chances of detecting language correctly.
     if(text.length > minimum_character_length)
     {
-        //let startTime = performance.now();
+        //const startTime = performance.now();
 
         // Looks like we have enough text to reliably detect the language.
         guessLanguage.detect(text, function (language)
         {
             // The index of the dash character (-) in the language code (ex for en-US this will be 2)
-            let dashIndex = language.indexOf("-"),
+            const dashIndex = language.indexOf("-"),
                 languageOnlyCode = dashIndex < 0 ? language : language.substr(0, dashIndex);
 
             //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
@@ -116,6 +114,8 @@ function detectAndSetLanguage(targetElement, text)
     }
     else
     {
+        showFeedback(targetElement, "...", "Need more characters to detect language");
+        
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
 
@@ -131,27 +131,43 @@ function detectAndSetLanguage(targetElement, text)
 
 function showFeedback(element, feedbackText, feedbackTitle)
 {
-    // TODO: this doesn't adapt its position when the textarea is resized
     if (feedbackDiv)
     {
         feedbackDiv.parentNode.removeChild(feedbackDiv);
     }
-    let feedbackWidth = 20;
-    let feedbackHeight = 12;
-    let leftPos = element.offsetLeft + element.offsetWidth - feedbackWidth - 25;
-    let topPos = element.offsetTop + element.offsetHeight - feedbackHeight - 12;
-    let feedbackNode = document.createElement("div");
+    const leftPos = element.offsetLeft + element.offsetWidth - 43;
+    const topPos = element.offsetTop + element.offsetHeight - 20;
+    const feedbackNode = document.createElement("div");
     feedbackNode.title = feedbackTitle;
-    feedbackNode.style.cssText =
-        "position:absolute; left: " + leftPos + "px; top:" + topPos + "px;" +
-        "width:" + feedbackWidth + "px; height:" + feedbackHeight + "px;" +
-        "background-color:#bcb1ff; color:white; opacity:0.9;" +
-        "font-family:sans-serif; font-size:11px; font-weight:bold;" +
-        "padding:4px; border-radius:4px";
-    var textNode = document.createTextNode(feedbackText);
+    feedbackNode.style.position = "absolute";
+    feedbackNode.style.left = leftPos + "px";
+    feedbackNode.style.top = topPos + "px";
+    feedbackNode.style.backgroundColor = "#bcb1ff";
+    feedbackNode.style.color = "white";
+    feedbackNode.style.opacity = 0.9;
+    feedbackNode.style.fontFamily = "sans-serif";
+    feedbackNode.style.fontSize = "11px";
+    feedbackNode.style.fontWeight = "bold";
+    feedbackNode.style.paddingLeft = "4px";
+    feedbackNode.style.paddingRight = "4px";
+    feedbackNode.style.borderRadius = "4px";
+    const textNode = document.createTextNode(feedbackText);
     feedbackNode.appendChild(textNode);
     element.parentNode.appendChild(feedbackNode);
     feedbackDiv = feedbackNode;
+    // 'Resize' doesn't properly work on textareas, also
+    // see http://stackoverflow.com/questions/5570390/resize-event-for-textarea
+    // TODO: we need another resize listener for the case the texarea is resized because its containing element (e.g. the browser window) is resized
+    element.onmousedown = function(evt) {
+        feedbackNode.style.display = "none";  // don't show at old position while textarea is being resized
+    };
+    element.onmouseup = function(evt) {
+        const leftPos = element.offsetLeft + element.offsetWidth - 43;
+        const topPos = element.offsetTop + element.offsetHeight - 20;
+        feedbackNode.style.display = "inline";
+        feedbackNode.style.left = leftPos + "px";
+        feedbackNode.style.top = topPos + "px";
+    };
 }
 
 function isEligible(element)
@@ -194,7 +210,7 @@ document.documentElement.addEventListener("paste", function (e)
     if(isEligible(e.target))
     {
         // We try to detect only if the pasted data is available in plain text format
-        let text = e.clipboardData.getData("text/plain");
+        const text = e.clipboardData.getData("text/plain");
 
         if(text)
             detectAndSetLanguage(e.target, text);

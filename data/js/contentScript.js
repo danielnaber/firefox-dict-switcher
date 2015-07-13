@@ -95,7 +95,6 @@ function detectAndSetLanguage(targetElement, text)
                     'whitelist': detectableLanguages
                 });
         } catch (e) {
-            // see https://github.com/wooorm/franc/issues/22
             showFeedback(targetElement, "??", "Could not detect language: " + e.toString());
             return;
         }

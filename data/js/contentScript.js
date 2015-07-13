@@ -17,8 +17,13 @@ const minimum_character_length = 25;
 // Variable to store user preferences
 let userPreferences,
 // A div that shows feedback of detected language:
-    feedbackDiv,
+    feedbackDiv = document.createElement("div"),
+    // In this variable we keep a reference to the input element which the addon operates on currently
+    currentInputElement,
     ignoreSignature;
+
+// Initialize the feedback div. It has our unique id
+feedbackDiv.id = "danielnaber-firefox-dict-switcher-tooltip";
 
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
@@ -27,6 +32,14 @@ self.port.on("config", function (prefs)
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
     ignoreSignature = userPreferences["ignoreSignature"];
+});
+
+// The main script sends this message after it receives the detected language code, and found the language dialect
+// (ie. the dictionary) that will be used, or found that there's no dictionary for the detected language
+// See the changeDictionary function in main.js
+self.port.on("feedback", function (feedback)
+{
+    showFeedback(currentInputElement, feedback.language, feedback.message, feedback.isWarning);
 });
 
 function detectAndSetLanguage(targetElement, text)
@@ -72,35 +85,22 @@ function detectAndSetLanguage(targetElement, text)
 
             //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-            // If the language wasn't successfully identified, or the user chose to not detect the detected
-            // language (see the configs in package.json)
-            if(language == "unknown" || userPreferences[languageOnlyCode] == "-")
-            {
-                if(language == "unknown")
-                {
-                    showFeedback(targetElement, "...", "Need more characters to detect language");
-                }
-                else
-                {
-                    showFeedback(targetElement, "--", "Detected " + languageOnlyCode + " but it's disabled in configuration");
-                }
-
-                // Disable spell checking
-                targetElement.spellcheck = false;
-
-                // send null to indicate that to the main script
-                self.port.emit("changeDictionary", null);
-
-                // and set a flag to indicate that it's our code who disabled spell checking not the page developer's
-                // We do so only if the attribute wasn't already set to false be the page developer
-                if(!developerDisabledSpellChecking)
-                    targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
-            }
+            // If the language wasn't successfully identified
+            if(language == "unknown")
+                showFeedback(targetElement, "...", "Need more characters to detect language");
+            // If the user chose to ignore the detected language (see the configs in package.json)
+            else if(userPreferences[languageOnlyCode] == "-")
+                showFeedback(targetElement, "--", "Detected " + languageOnlyCode + " but it's disabled in configuration");
             else
             {
-                // TODO: show language code including variant here:
-                showFeedback(targetElement, language, "");
-                
+                // We won't show the feedback tooltip until the main script sends us the language dialect that
+                // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
+                // for the input element the user currently edits so that we can show the feedback tooltip on it
+                // later.
+                // Notice that we are either passed targetElement as a parameter or use the current activeElement
+                // (in case of paste events only)
+                currentInputElement = targetElement || document.activeElement;
+
                 // If the language was detected successfully enable spell checking and send its code to the main script
                 if(!developerDisabledSpellChecking)
                 {
@@ -109,7 +109,20 @@ function detectAndSetLanguage(targetElement, text)
                 }
 
                 self.port.emit("changeDictionary", language);
+
+                return;
             }
+
+            // Disable spell checking...
+            targetElement.spellcheck = false;
+
+            // ...send null to indicate to the main script that either we failed to detect or the language is disabled...
+            //self.port.emit("changeDictionary", null);
+
+            // ...and set a flag to indicate that it's our code who disabled spell checking not the page developer's
+            // We do so only if the attribute wasn't already set to false be the page developer
+            if(!developerDisabledSpellChecking)
+                targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
         });
     }
     else
@@ -129,45 +142,51 @@ function detectAndSetLanguage(targetElement, text)
     }
 }
 
-function showFeedback(element, feedbackText, feedbackTitle)
+function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 {
-    if (feedbackDiv)
-    {
-        feedbackDiv.parentNode.removeChild(feedbackDiv);
-    }
-    const leftPos = element.offsetLeft + element.offsetWidth - 43;
-    const topPos = element.offsetTop + element.offsetHeight - 20;
-    const feedbackNode = document.createElement("div");
-    feedbackNode.title = feedbackTitle;
-    feedbackNode.style.position = "absolute";
-    feedbackNode.style.left = leftPos + "px";
-    feedbackNode.style.top = topPos + "px";
-    feedbackNode.style.backgroundColor = "#bcb1ff";
-    feedbackNode.style.color = "white";
-    feedbackNode.style.opacity = 0.9;
-    feedbackNode.style.fontFamily = "sans-serif";
-    feedbackNode.style.fontSize = "11px";
-    feedbackNode.style.fontWeight = "bold";
-    feedbackNode.style.paddingLeft = "4px";
-    feedbackNode.style.paddingRight = "4px";
-    feedbackNode.style.borderRadius = "4px";
-    const textNode = document.createTextNode(feedbackText);
-    feedbackNode.appendChild(textNode);
-    element.parentNode.appendChild(feedbackNode);
-    feedbackDiv = feedbackNode;
-    // 'Resize' doesn't properly work on textareas, also
-    // see http://stackoverflow.com/questions/5570390/resize-event-for-textarea
-    // TODO: we need another resize listener for the case the texarea is resized because its containing element (e.g. the browser window) is resized
-    element.onmousedown = function(evt) {
-        feedbackNode.style.display = "none";  // don't show at old position while textarea is being resized
-    };
-    element.onmouseup = function(evt) {
-        const leftPos = element.offsetLeft + element.offsetWidth - 43;
-        const topPos = element.offsetTop + element.offsetHeight - 20;
-        feedbackNode.style.display = "inline";
-        feedbackNode.style.left = leftPos + "px";
-        feedbackNode.style.top = topPos + "px";
-    };
+    // Detach the feedback div from the document if it were previously attached
+    if(feedbackDiv.parentElement)
+        feedbackDiv.parentElement.removeChild(feedbackDiv);
+
+    const parentElement = element.offsetParent;
+
+    // offsetParent is null if the element itself is hidden. If the element is hidden we exit as, of course,
+    // we won't show feedback on a hidden element
+    if(!parentElement)
+        return;
+
+    currentInputElement = element;
+
+    feedbackDiv.title = feedbackTitle;
+    feedbackDiv.textContent = feedbackText;
+
+    if(isWarning)
+        feedbackDiv.classList.add("warning");
+    else
+        feedbackDiv.classList.remove("warning");
+    
+    parentElement.appendChild(feedbackDiv);
+
+    // Initialize the positioning loop
+    requestAnimationFrame(positionFeedbackDiv);
+}
+
+// This function keeps the feedback div always positioned properly relative to 
+function positionFeedbackDiv()
+{
+    const parentElement = feedbackDiv.parentElement;
+
+    if(!parentElement)
+        return;
+
+    const leftPos = currentInputElement.offsetLeft + currentInputElement.offsetWidth - 43,
+          topPos = currentInputElement.offsetTop + currentInputElement.offsetHeight - 20;
+
+    feedbackDiv.style.left = leftPos + "px";
+    feedbackDiv.style.top = topPos + "px";
+
+    // Keep the loop going
+    requestAnimationFrame(positionFeedbackDiv);
 }
 
 function isEligible(element)
@@ -202,6 +221,16 @@ document.documentElement.addEventListener("focus", function (evt)
     // Set correct language when we set the focus to already filled textarea
     if(isEligible(evt.target))
         detectAndSetLanguage(evt.target);
+}, true);
+
+// HACK: The blur event doesn't bubble, so I set the useCapture parameter of addEventListener to true.
+// We should use the focusout event which bubbles but it's not supported on Firefox as of the date I wrote this.
+// See the note on this article https://developer.mozilla.org/en-US/docs/Web/Events/focusout
+document.documentElement.addEventListener("blur", function (evt)
+{
+    // When the focus gets out of an element, detach the feedback div from the document
+    if(feedbackDiv.parentElement)
+        feedbackDiv.parentElement.removeChild(feedbackDiv);
 }, true);
 
 document.documentElement.addEventListener("paste", function (e)

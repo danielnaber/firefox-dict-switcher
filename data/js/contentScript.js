@@ -169,39 +169,43 @@ function getDetectableLanguages()
     // Looks like we have enough text to reliably detect the language.
     let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
                                'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
+    addAdditionalLanguages(detectableLanguages);
+    removeDisabledLanguages(detectableLanguages);
+    return detectableLanguages;
+}
+
+function addAdditionalLanguages(detectableLanguages)
+{
     for (var i = 1; i <= 3; i++)
     {
         let additionalLanguage = userPreferences["additionalLanguage"+i];
-        if (additionalLanguage && additionalLanguage !== '-') {
+        if (additionalLanguage && additionalLanguage !== '-')
+        {
             detectableLanguages.push(additionalLanguage);
         }
     }
-    /*let potentiallyDisabledLanguages = ['en', 'es', 'de', 'pt'];  // these have variants and a "Don't detect this language" option
+}
+
+function removeDisabledLanguages(detectableLanguages)
+{
+    const potentiallyDisabledLanguages = [
+        { short: 'en', long: 'eng' },
+        { short: 'es', long: 'spa' },
+        { short: 'de', long: 'deu' },
+        { short: 'pt', long: 'por' } ];  // these have variants and a "Don't detect this language" option in the settings
     for (let idx in potentiallyDisabledLanguages)
     {
-        let shortCode = potentiallyDisabledLanguages[idx];
-        console.log("shortCode " + shortCode);
-        console.log("userPreferences[" + shortCode + "] " + userPreferences[shortCode]);
-        if (userPreferences[potentiallyDisabledLanguages[idx]])
+        let shortCode = potentiallyDisabledLanguages[idx].short;
+        if (userPreferences[shortCode] === '-')
         {
-            let longCode = iso6393[shortCode];
-            // TODO: this is not correct, the mapping works the other way round
-            if (!longCode)
-            {
-                showFeedback(targetElement, "??", "Error: Could not get long code for " + shortCode, true);
-                return;
-            }
+            let longCode = potentiallyDisabledLanguages[idx].long;
             let pos = detectableLanguages.indexOf(longCode);
             if (pos > -1)
             {
                 detectableLanguages.splice(pos, 1);
-                console.log("remove " + idx);
             }
         }
     }
-    console.log("detectableLanguages " + detectableLanguages);
-    */
-    return detectableLanguages;
 }
 
 function showFeedback(element, feedbackText, feedbackTitle, isWarning)

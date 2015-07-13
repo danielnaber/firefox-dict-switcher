@@ -14,16 +14,24 @@
 //   limitations under the License.
 
 // Result 2015-07-13 (evaluated on 5000 random sentences per language from tatoeba.org):
+//
 //   guessLanguage.js (100 languages):
 //     For English: 23.8 chars, noCorrectGuessCount: 1042, runtime 52secs
 //     For German: 24.9 chars, noCorrectGuessCount: 610, runtime 62secs
+//
+//   Franc 1.1.0 (20 languages):
+//     For English: 16.5 chars, noCorrectGuessCount: 500, runtime 11sec
+//     For German: 12.7 chars, noCorrectGuessCount: 128, runtime 12sec
+//   Franc 1.1.0 (100 languages - not necessarily the same as guessLanguage.js):
+//     For English: 19.2 chars, noCorrectGuessCount: 933, runtime 34sec
+//     For German: 17.4 chars, noCorrectGuessCount: 277, runtime 39sec
 //   Franc 1.1.0 (175 languages):
 //     For English: 25.4 chars, noCorrectGuessCount: 1710, runtime 66sec
 //     For German: 20.4 chars, noCorrectGuessCount: 538, runtime 85sec
 
 const inputFile = "/media/Data/tatoeba/tatoeba-en-sentences-only-subset.txt";
-const expectedLang = "en";   // two-character for guessLanguage, three-character for franc
-const mode = "guessLanguage";  // 'guessLanguage' or 'franc'
+const expectedLang = "eng";   // two-character for guessLanguage, three-character for franc
+const mode = "franc";  // 'guessLanguage' or 'franc'
 
 const guessLanguage = require('guesslanguage');
 const franc = require('franc');
@@ -57,7 +65,13 @@ for (var line in lines) {
                 }
             });
         } else if (mode === 'franc') {
-            var language = franc(shortened);
+            var language = franc(shortened, 
+                {
+                    // top 20:
+                    'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn', 'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur']
+                    // top 100:
+                    //'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn', 'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur', 'urd', 'guj', 'pol', 'ukr', 'mai', 'mal', 'kan', 'mya', 'ori', 'gax', 'swh', 'sun', 'ron', 'pan', 'bho', 'amh', 'fuc', 'hau', 'bos', 'bos', 'hrv', 'nld', 'srp', 'srp', 'tha', 'ckb', 'yor', 'uzn', 'uzn', 'ibo', 'nep', 'ceb', 'skr', 'tgl', 'hun', 'azj', 'azj', 'sin', 'ell', 'ces', 'mag', 'bel', 'plt', 'mad', 'nya', 'qug', 'kin', 'zul', 'bul', 'swe', 'lin', 'som', 'hms', 'ilo', 'kaz', 'uig', 'uig', 'hat', 'khm', 'aka', 'aka', 'hil', 'pes', 'sna', 'tat', 'xho', 'hye', 'min', 'afr', 'lua', 'sat', 'bod', 'tir', 'fin', 'run', 'slk', 'tuk', 'tuk', 'dan', 'als']
+                });
             if (language !== expectedLang && minCorrectChars < shortened.length) {
                 minCorrectChars = prevCharLength;
                 console.log("Wrong: '" + shortened + "'");

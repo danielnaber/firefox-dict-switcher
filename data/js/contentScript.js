@@ -80,12 +80,37 @@ function detectAndSetLanguage(targetElement, text)
         // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
                                    'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
-        for (var i = 1; i <= 3; i++) {
+        for (var i = 1; i <= 3; i++)
+        {
             let additionalLanguage = userPreferences["additionalLanguage"+i];
             if (additionalLanguage && additionalLanguage !== '-') {
                 detectableLanguages.push(additionalLanguage);
             }
         }
+        /*let potentiallyDisabledLanguages = ['en', 'es', 'de', 'pt'];  // these have variants and a "Don't detect this language" option
+        for(let idx in potentiallyDisabledLanguages)
+        {
+            let shortCode = potentiallyDisabledLanguages[idx];
+            console.log("shortCode " + shortCode);
+            console.log("userPreferences[" + shortCode + "] " + userPreferences[shortCode]);
+            if(userPreferences[potentiallyDisabledLanguages[idx]])
+            {
+                let longCode = iso6393[shortCode]; TODO: this is not correct, the mapping works the other way round
+                if(!longCode)
+                {
+                    showFeedback(targetElement, "??", "Error: Could not get long code for " + shortCode, true);
+                    return;
+                }
+                let pos = detectableLanguages.indexOf(longCode);
+                if(pos > -1)
+                {
+                    detectableLanguages.splice(pos, 1);
+                    console.log("remove " + idx);
+                }
+            }
+        }
+        console.log("detectableLanguages " + detectableLanguages);
+        */
         
         var language;
         try {
@@ -95,7 +120,7 @@ function detectAndSetLanguage(targetElement, text)
                     'whitelist': detectableLanguages
                 });
         } catch (e) {
-            showFeedback(targetElement, "??", "Could not detect language: " + e.toString());
+            showFeedback(targetElement, "??", "Error: Could not detect language: " + e.toString(), true);
             return;
         }
 
@@ -110,7 +135,7 @@ function detectAndSetLanguage(targetElement, text)
             var languageInfo = iso6393[language];
             if(!languageInfo)
             {
-                showFeedback(targetElement, "??", "Could not find short language code for '" + language + "'");
+                showFeedback(targetElement, "??", "Error: Could not find short language code for '" + language + "'", true);
                 return;
             }
             shortCode = languageInfo.iso6391;
@@ -221,7 +246,7 @@ function positionFeedbackDiv()
 
 function isEligible(element)
 {
-    // The addon operates only on textarea elements or elements with the contenteditable attribute set
+    // The addon operates only on textarea elements or elements with the contentEditable attribute set
     return element.tagName == "TEXTAREA" ||
            element.contentEditable === 'true';
 }

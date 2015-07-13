@@ -194,7 +194,7 @@ function isEligible(element)
 {
     // The addon operates only on textarea elements or elements with the contenteditable attribute set
     return element.tagName == "TEXTAREA" ||
-           element.contentEditable === 'true';   // TODO: this can be 'inherit', we need the real value
+           element.contentEditable === 'true';
 }
 
 // Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead

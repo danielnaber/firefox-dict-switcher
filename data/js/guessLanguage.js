@@ -530,6 +530,8 @@
 
         // return the best match we've now calculated
         callback.apply(undefined, [sortedScores[0][0]]);
+        //console.log("sample: >>" + sample + "<<");
+        //console.log("sortedScores: " + sortedScores);
       }
 
       function createOrderedModel(content) {

@@ -78,18 +78,32 @@ function detectAndSetLanguage(targetElement, text)
         //const startTime = performance.now();
 
         // Looks like we have enough text to reliably detect the language.
-        var language = franc(text,
-            {
-                // top 20:
-                // TODO: add the languages from the user's config
-                'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
-                              'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur']
-            });
+        let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
+                                   'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
+        for (var i = 1; i <= 3; i++) {
+            let additionalLanguage = userPreferences["additionalLanguage"+i];
+            if (additionalLanguage && additionalLanguage !== '-') {
+                detectableLanguages.push(additionalLanguage);
+            }
+        }
+        
+        var language;
+        try {
+            language = franc(text,
+                {
+                    // top 20 + user settings:
+                    'whitelist': detectableLanguages
+                });
+        } catch (e) {
+            // see https://github.com/wooorm/franc/issues/22
+            showFeedback(targetElement, "??", "Could not detect language: " + e.toString());
+            return;
+        }
 
         var shortCode;
         if(language === "und")  // 'unknown'
         {
-            showFeedback(targetElement, "...", "Need more characters to detect language");
+            showFeedback(targetElement, "...", "Need more characters to detect language"); // TODO: improve message
             return;
         }
         else

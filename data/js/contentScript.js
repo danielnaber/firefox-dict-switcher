@@ -78,53 +78,69 @@ function detectAndSetLanguage(targetElement, text)
         //const startTime = performance.now();
 
         // Looks like we have enough text to reliably detect the language.
-        guessLanguage.detect(text, function (language)
-        {
-            // The index of the dash character (-) in the language code (ex for en-US this will be 2)
-            const dashIndex = language.indexOf("-"),
-                languageOnlyCode = dashIndex < 0 ? language : language.substr(0, dashIndex);
-
-            //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
-
-            // If the language wasn't successfully identified
-            if(language == "unknown")
-                showFeedback(targetElement, "...", "Need more characters to detect language");
-            // If the user chose to ignore the detected language (see the configs in package.json)
-            else if(userPreferences[languageOnlyCode] == "-")
-                showFeedback(targetElement, "--", "Detected " + languageOnlyCode + " but it's disabled in configuration");
-            else
+        var language = franc(text,
             {
-                // We won't show the feedback tooltip until the main script sends us the language dialect that
-                // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
-                // for the input element the user currently edits so that we can show the feedback tooltip on it
-                // later.
-                // Notice that we are either passed targetElement as a parameter or use the current activeElement
-                // (in case of paste events only)
-                currentInputElement = targetElement || document.activeElement;
+                // top 20:
+                // TODO: add the languages from the user's config
+                'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
+                              'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur']
+            });
 
-                // If the language was detected successfully enable spell checking and send its code to the main script
-                if(!developerDisabledSpellChecking)
-                {
-                    // We enable spell checking only if the attribute wasn't already set to false be the page developer
-                    targetElement.spellcheck = true;
-                }
-
-                self.port.emit("changeDictionary", language);
-
+        var shortCode;
+        if(language === "und")  // 'unknown'
+        {
+            showFeedback(targetElement, "...", "Need more characters to detect language");
+            return;
+        }
+        else
+        {
+            var languageInfo = iso6393[language];
+            if(!languageInfo)
+            {
+                showFeedback(targetElement, "??", "Could not find short language code for '" + language + "'");
                 return;
             }
+            shortCode = languageInfo.iso6391;
+        }
 
-            // Disable spell checking...
-            targetElement.spellcheck = false;
+        //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-            // ...send null to indicate to the main script that either we failed to detect or the language is disabled...
-            //self.port.emit("changeDictionary", null);
+        // If the language wasn't successfully identified
+        // If the user chose to ignore the detected language (see the configs in package.json)
+        if(userPreferences[shortCode] == "-")
+            showFeedback(targetElement, "--", "Detected " + shortCode + " but it's disabled in configuration");
+        else
+        {
+            // We won't show the feedback tooltip until the main script sends us the language dialect that
+            // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
+            // for the input element the user currently edits so that we can show the feedback tooltip on it
+            // later.
+            // Notice that we are either passed targetElement as a parameter or use the current activeElement
+            // (in case of paste events only)
+            currentInputElement = targetElement || document.activeElement;
 
-            // ...and set a flag to indicate that it's our code who disabled spell checking not the page developer's
-            // We do so only if the attribute wasn't already set to false be the page developer
+            // If the language was detected successfully enable spell checking and send its code to the main script
             if(!developerDisabledSpellChecking)
-                targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
-        });
+            {
+                // We enable spell checking only if the attribute wasn't already set to false be the page developer
+                targetElement.spellcheck = true;
+            }
+
+            self.port.emit("changeDictionary", shortCode);
+
+            return;
+        }
+
+        // Disable spell checking...
+        targetElement.spellcheck = false;
+
+        // ...send null to indicate to the main script that either we failed to detect or the language is disabled...
+        //self.port.emit("changeDictionary", null);
+
+        // ...and set a flag to indicate that it's our code who disabled spell checking not the page developer's
+        // We do so only if the attribute wasn't already set to false be the page developer
+        if(!developerDisabledSpellChecking)
+            targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
     }
     else
     {

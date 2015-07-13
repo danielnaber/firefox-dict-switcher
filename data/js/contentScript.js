@@ -1,4 +1,5 @@
-//          Copyright 2015 Daniel Naber
+//   Automatic Dictionary Switcher Add-on for Firefox
+//   Copyright 2015 Daniel Naber
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -52,7 +53,7 @@ function detectAndSetLanguage(targetElement, text)
     // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
     // I use === because I'm not sure if this attribute accepts only booleans
     const developerDisabledSpellChecking = targetElement.spellcheck === false &&
-                                         !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
+                                          !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
     // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
     // the element itself

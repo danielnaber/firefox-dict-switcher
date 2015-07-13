@@ -130,6 +130,8 @@
             "description": "This add-on by default detects Chinese, Spanish, English, Russian, Arabic, Bengali, Hindi, Portuguese, Indonesian, Japanese, French, German, Javanese, Korean, Telugu, Vietnamese, Marathi, Italian, Tamil, and Turkish. If you use another language you need to activate it here.",
             "type": "menulist",
             "value": "-",
+            "__comment1": "Source: https://github.com/wooorm/franc/blob/master/Supported-Languages.md",
+            "__comment2": "Note that dictionaries might not even exist for all languages, we have not checked that.",
             "options": [
                 { "value": "-", "label": "-" },
                 { "value": "ace", "label": "Achinese" },

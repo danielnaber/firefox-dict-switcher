@@ -179,8 +179,8 @@ function positionFeedbackDiv()
     if(!parentElement)
         return;
 
-    const leftPos = currentInputElement.offsetLeft + currentInputElement.offsetWidth - 43,
-          topPos = currentInputElement.offsetTop + currentInputElement.offsetHeight - 20;
+    const leftPos = currentInputElement.offsetLeft + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
+          topPos = currentInputElement.offsetTop + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
 
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";

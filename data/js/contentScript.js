@@ -103,7 +103,7 @@ function detectAndSetLanguage(targetElement, text)
         var shortCode;
         if(language === "und")  // 'unknown'
         {
-            showFeedback(targetElement, "...", "Need more characters to detect language"); // TODO: improve message
+            showFeedback(targetElement, "...", "Language not configured or need more characters to detect language");
             return;
         }
         else

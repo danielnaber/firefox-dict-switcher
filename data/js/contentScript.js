@@ -161,9 +161,9 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     feedbackDiv.textContent = feedbackText;
 
     if(isWarning)
-        feedbackDiv.classList.add("warning");
+        feedbackDiv.classList.add("firefox-dict-switcher-warning");
     else
-        feedbackDiv.classList.remove("warning");
+        feedbackDiv.classList.remove("firefox-dict-switcher-warning");
     
     parentElement.appendChild(feedbackDiv);
 

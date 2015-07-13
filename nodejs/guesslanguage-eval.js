@@ -1,4 +1,4 @@
-//   Simple guessLanguage.js evaluation for short text.
+//   Simple guessLanguage.js and franc evaluation for short text.
 //   Copyright 2015 Daniel Naber
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,14 +13,20 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-// Result 205-07-13 (evaluated on 5000 random sentences per language from tatoeba.org):
-//   For English: 23.8 chars, noCorrectGuessCount: 1042
-//   For German: 24.9 chars, noCorrectGuessCount: 610
+// Result 2015-07-13 (evaluated on 5000 random sentences per language from tatoeba.org):
+//   guessLanguage.js (100 languages):
+//     For English: 23.8 chars, noCorrectGuessCount: 1042, runtime 52secs
+//     For German: 24.9 chars, noCorrectGuessCount: 610, runtime 62secs
+//   Franc 1.1.0 (175 languages):
+//     For English: 25.4 chars, noCorrectGuessCount: 1710, runtime 66sec
+//     For German: 20.4 chars, noCorrectGuessCount: 538, runtime 85sec
 
-const expectedLang = "en";
 const inputFile = "/media/Data/tatoeba/tatoeba-en-sentences-only-subset.txt";
+const expectedLang = "en";   // two-character for guessLanguage, three-character for franc
+const mode = "guessLanguage";  // 'guessLanguage' or 'franc'
 
 const guessLanguage = require('guesslanguage');
+const franc = require('franc');
 const fs = require('fs');
 
 const buffer = fs.readFileSync(inputFile);
@@ -39,8 +45,19 @@ for (var line in lines) {
     for (var i = parts.length; i >= 1; i--) {
         var shortened = parts.slice(0, i).join("");
         var prevCharLength = parts.slice(0, i+1).join("").length;
-        guessLanguage.guessLanguage.detect(shortened, function(language) {
-            //console.log(i + " " + language + " <= '" + shortened + "'");
+        if (mode === 'guessLanguage') {
+            guessLanguage.guessLanguage.detect(shortened, function(language) {
+                //console.log(i + " " + language + " <= '" + shortened + "'");
+                if (language !== expectedLang && minCorrectChars < shortened.length) {
+                    minCorrectChars = prevCharLength;
+                    console.log("Wrong: '" + shortened + "'");
+                }
+                if (language === expectedLang) {
+                    everCorrect = true;
+                }
+            });
+        } else if (mode === 'franc') {
+            var language = franc(shortened);
             if (language !== expectedLang && minCorrectChars < shortened.length) {
                 minCorrectChars = prevCharLength;
                 console.log("Wrong: '" + shortened + "'");
@@ -48,7 +65,9 @@ for (var line in lines) {
             if (language === expectedLang) {
                 everCorrect = true;
             }
-        });
+        } else {
+            throw "Unknown mode: " + mode;
+        }
     }
     if (everCorrect) {
         console.log("minCorrectChars: " + minCorrectChars);

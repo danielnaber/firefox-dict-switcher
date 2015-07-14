@@ -75,6 +75,7 @@ function detectAndSetLanguage(targetElement, text)
     {
         //const startTime = performance.now();
 
+        // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = getDetectableLanguages();
         
         var language;
@@ -164,7 +165,6 @@ function detectAndSetLanguage(targetElement, text)
 
 function getDetectableLanguages()
 {
-    // Looks like we have enough text to reliably detect the language.
     let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
                                'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
     addAdditionalLanguages(detectableLanguages);
@@ -243,8 +243,8 @@ function positionFeedbackDiv()
     if(!parentElement)
         return;
 
-    const leftPos = currentInputElement.offsetLeft + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
-          topPos = currentInputElement.offsetTop + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
+    const leftPos = currentInputElement.getBoundingClientRect().left + window.scrollX + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
+          topPos = currentInputElement.getBoundingClientRect().top + window.scrollY + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
 
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";

@@ -249,8 +249,8 @@ function positionFeedbackDiv()
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";
 
-    // Keep the loop going
-    requestAnimationFrame(positionFeedbackDiv);
+    // Keep the loop going but don't waste CPU:
+    setTimeout(function() {requestAnimationFrame(positionFeedbackDiv);}, 100);
 }
 
 function isEligible(element)

@@ -229,7 +229,7 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     else
         feedbackDiv.classList.remove("firefox-dict-switcher-warning");
     
-    parentElement.appendChild(feedbackDiv);
+    document.body.appendChild(feedbackDiv);
 
     // Initialize the positioning loop
     requestAnimationFrame(positionFeedbackDiv);

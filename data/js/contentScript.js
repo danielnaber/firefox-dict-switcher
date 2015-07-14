@@ -15,21 +15,20 @@
 
 const minimum_character_length = 25;
 
-// Variable to store user preferences
 let userPreferences,
-// A div that shows feedback of detected language:
+     // a div that shows feedback of detected language:
     feedbackDiv = document.createElement("div"),
-    // In this variable we keep a reference to the input element which the addon operates on currently
+    // input element which the addon operates on currently (e.g. textarea):
     currentInputElement,
     ignoreSignature;
 
-// Initialize the feedback div. It has our unique id
+// Initialize the feedback div. It has our unique id:
 feedbackDiv.id = "danielnaber-firefox-dict-switcher-tooltip";
 
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
 {
-    // We require the presence of user preferences just to know the languages for which the user chosen "Don't
+    // We require the presence of user preferences just to know the languages for which the user chose "Don't
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
     ignoreSignature = userPreferences["ignoreSignature"];
@@ -51,7 +50,6 @@ function detectAndSetLanguage(targetElement, text)
     // attribute stays false.
     // I set the developerDisabledSpellChecking to indicate this case
     // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
-    // I use === because I'm not sure if this attribute accepts only booleans
     const developerDisabledSpellChecking = targetElement.spellcheck === false &&
                                           !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
@@ -127,7 +125,7 @@ function detectAndSetLanguage(targetElement, text)
             // If the language was detected successfully enable spell checking and send its code to the main script
             if(!developerDisabledSpellChecking)
             {
-                // We enable spell checking only if the attribute wasn't already set to false be the page developer
+                // We enable spell checking only if the attribute wasn't already set to false by the page developer
                 targetElement.spellcheck = true;
             }
 

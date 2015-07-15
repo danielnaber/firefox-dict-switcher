@@ -13,7 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-const minimum_character_length = 25;
+const minimumCharacterLength = 25;
 
 let userPreferences,
      // a div that shows feedback of detected language:
@@ -72,7 +72,7 @@ function detectAndSetLanguage(targetElement, text)
 
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
-    if(text.length > minimum_character_length)
+    if(text.length > minimumCharacterLength)
     {
         //const startTime = performance.now();
 

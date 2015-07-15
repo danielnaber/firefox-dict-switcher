@@ -14,7 +14,7 @@
 //   limitations under the License.
 
 const minimumCharacterLength = 25,
-      feedBackDivRefreshRate = 100;
+      feedBackDivRefreshRate = 250;
       feedBackWaitText = "...";
 
 let userPreferences,

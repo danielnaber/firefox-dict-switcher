@@ -230,7 +230,7 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 
     currentInputElement = element;
 
-    feedbackDiv.title = feedbackTitle;
+    feedbackDiv.title = feedbackTitle + "\n(Automatic Dictionary Switcher Add-on for Firefox)";
     feedbackDiv.textContent = feedbackText;
 
     if(isWarning)

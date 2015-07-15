@@ -239,12 +239,15 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     // Initialize the positioning loop
     setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
 
-    if (feedbackTimeout) {
+    if (feedbackTimeout)
+    {
         clearTimeout(feedbackTimeout);
     }
     // the feedback item can cover text, so hide it after some time:
     let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
-    feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
+    // TODO: not robust enough yet:
+    //feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
+    feedbackTimeout = setTimeout(function() {feedbackDiv.parentElement.removeChild(feedbackDiv)}, feedbackHideSeconds);
 }
 
 function fadeOut(el)
@@ -254,8 +257,11 @@ function fadeOut(el)
     {
         if ((el.style.opacity -= 0.05) < 0)
         {
-            feedbackDiv.parentElement.removeChild(feedbackDiv);
-            el.style.opacity = 1;
+            if (feedbackDiv.parentElement)
+            {
+                feedbackDiv.parentElement.removeChild(feedbackDiv);
+                el.style.opacity = 1;
+            }
         }
         else
         {

@@ -14,8 +14,8 @@
 //   limitations under the License.
 
 const minimumCharacterLength = 25,
-      feedBackDivRefreshRate = 250;
-      feedBackWaitText = "...";
+      feedbackDivRefreshRate = 250;
+      feedbackWaitText = "...";
 
 let userPreferences,
      // a div that shows feedback of detected language:
@@ -96,7 +96,7 @@ function detectAndSetLanguage(targetElement, text)
         var shortCode;
         if(language === "und")  // 'unknown'
         {
-            showFeedback(targetElement, feedBackWaitText, "Language not configured or need more characters to detect language");
+            showFeedback(targetElement, feedbackWaitText, "Language not configured or need more characters to detect language");
             return;
         }
         else
@@ -151,7 +151,7 @@ function detectAndSetLanguage(targetElement, text)
     }
     else
     {
-        showFeedback(targetElement, feedBackWaitText, "Need more characters to detect language");
+        showFeedback(targetElement, feedbackWaitText, "Need more characters to detect language");
         
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
@@ -212,7 +212,7 @@ function removeDisabledLanguages(detectableLanguages)
 function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 {
 
-    if (feedbackDiv.textContent === feedbackText && feedbackText !== feedBackWaitText)
+    if (feedbackDiv.textContent === feedbackText && feedbackText !== feedbackWaitText)
     {
         // don't always show the same feedback after it has been hidden
         return;
@@ -245,10 +245,10 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     positionFeedbackDiv();
 
     // Initialize the positioning loop
-    setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
+    setTimeout(positionFeedbackDiv, feedbackDivRefreshRate);
 
     // the feedback item can cover text, so hide it after some time (unless it's "...", i.e. not detection yet):
-    if (feedbackText !== feedBackWaitText) {
+    if (feedbackText !== feedbackWaitText) {
         if (feedbackTimeout)
         {
             clearTimeout(feedbackTimeout);
@@ -275,7 +275,7 @@ function fadeOut(el)
             if (feedbackDiv.parentElement)
             {
                 feedbackDiv.parentElement.removeChild(feedbackDiv);
-                feedbackDiv.textContent = feedBackWaitText;
+                feedbackDiv.textContent = feedbackWaitText;
                 el.style.opacity = 1;
             }
         }
@@ -302,7 +302,7 @@ function positionFeedbackDiv()
     feedbackDiv.style.top = topPos + "px";
 
     // Keep the loop going but don't waste CPU
-    setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
+    setTimeout(positionFeedbackDiv, feedbackDivRefreshRate);
 }
 
 function isEligible(element)
@@ -348,7 +348,7 @@ document.documentElement.addEventListener("blur", function (evt)
     if(feedbackDiv.parentElement)
         feedbackDiv.parentElement.removeChild(feedbackDiv);
         // when user enters field later, feedback will be shown again:
-        feedbackDiv.textContent = feedBackWaitText;
+        feedbackDiv.textContent = feedbackWaitText;
 }, true);
 
 document.documentElement.addEventListener("paste", function (e)

@@ -211,6 +211,13 @@ function removeDisabledLanguages(detectableLanguages)
 
 function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 {
+
+    if (feedbackDiv.textContent === feedbackText)
+    {
+        // don't always show the same feedback after is has been hidden
+        return;
+    }
+
     // Detach the feedback div from the document if it were previously attached
     if(feedbackDiv.parentElement)
         feedbackDiv.parentElement.removeChild(feedbackDiv);
@@ -249,7 +256,12 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
         let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
         // TODO: not robust enough yet:
         //feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
-        feedbackTimeout = setTimeout(function() {feedbackDiv.parentElement.removeChild(feedbackDiv)}, feedbackHideSeconds);
+        feedbackTimeout = setTimeout(function() {
+            if (feedbackDiv.parentElement)
+            {
+                feedbackDiv.parentElement.removeChild(feedbackDiv);
+            }
+        }, feedbackHideSeconds);
     }
 }
 
@@ -263,6 +275,7 @@ function fadeOut(el)
             if (feedbackDiv.parentElement)
             {
                 feedbackDiv.parentElement.removeChild(feedbackDiv);
+                feedbackDiv.textContent = feedBackWaitText;
                 el.style.opacity = 1;
             }
         }
@@ -334,6 +347,8 @@ document.documentElement.addEventListener("blur", function (evt)
     // When the focus gets out of an element, detach the feedback div from the document
     if(feedbackDiv.parentElement)
         feedbackDiv.parentElement.removeChild(feedbackDiv);
+        // when user enters field later, feedback will be shown again:
+        feedbackDiv.textContent = feedBackWaitText;
 }, true);
 
 document.documentElement.addEventListener("paste", function (e)

@@ -127,7 +127,7 @@
         {
             "name": "additionalLanguage1",
             "title": "Additional language 1",
-            "description": "This add-on by default detects English, Spanish, Portuguese, and German. If you use another language you need to activate it here.",
+            "description": "This add-on by default detects English, Spanish, German, and Portuguese. If you use another language you need to activate it here.",
             "type": "menulist",
             "value": "-",
             "__comment1": "Source: https://github.com/wooorm/franc/blob/master/Supported-Languages.md",

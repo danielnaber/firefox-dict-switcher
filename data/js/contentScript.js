@@ -18,6 +18,7 @@ const minimum_character_length = 25;
 let userPreferences,
      // a div that shows feedback of detected language:
     feedbackDiv = document.createElement("div"),
+    feedbackTimeout,
     // input element which the addon operates on currently (e.g. textarea):
     currentInputElement,
     ignoreSignature;
@@ -233,6 +234,29 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 
     // Initialize the positioning loop
     requestAnimationFrame(positionFeedbackDiv);
+
+    if (feedbackTimeout) {
+        clearTimeout(feedbackTimeout);
+    }
+    // the feedback item can cover text, so hide it after some time:
+    feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, 3000);
+}
+
+function fadeOut(el)
+{
+    el.style.opacity = 1;
+    (function fade()
+    {
+        if ((el.style.opacity -= 0.05) < 0)
+        {
+            feedbackDiv.parentElement.removeChild(feedbackDiv);
+            el.style.opacity = 1;
+        }
+        else
+        {
+            requestAnimationFrame(fade);
+        }
+    })();
 }
 
 // This function keeps the feedback div always positioned properly relative to 

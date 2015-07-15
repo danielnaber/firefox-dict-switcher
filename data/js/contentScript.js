@@ -231,7 +231,7 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     else
         feedbackDiv.classList.remove("firefox-dict-switcher-warning");
     
-    parentElement.appendChild(feedbackDiv);
+    document.body.appendChild(feedbackDiv);
 
     // Initialize the positioning loop
     requestAnimationFrame(positionFeedbackDiv);
@@ -245,8 +245,9 @@ function positionFeedbackDiv()
     if(!parentElement)
         return;
 
-    const leftPos = currentInputElement.offsetLeft + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
-          topPos = currentInputElement.offsetTop + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
+    const elementClientRect = currentInputElement.getBoundingClientRect(),
+          leftPos = elementClientRect.left + elementClientRect.width - feedbackDiv.clientWidth - 18,
+          topPos = elementClientRect.top + elementClientRect.height - feedbackDiv.clientHeight - 5;
 
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";

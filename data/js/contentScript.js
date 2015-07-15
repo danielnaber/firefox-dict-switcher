@@ -239,7 +239,8 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
         clearTimeout(feedbackTimeout);
     }
     // the feedback item can cover text, so hide it after some time:
-    feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, 3000);
+    let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
+    feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
 }
 
 function fadeOut(el)

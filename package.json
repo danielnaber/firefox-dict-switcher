@@ -666,6 +666,13 @@
             "description": "Ignore text after the signature delimiter ('-- \\n'). Useful for writing emails.",
             "type": "bool",
             "value": true
+        },
+        {
+            "name": "feedbackHideSeconds",
+            "title": "Automatically hide feedback",
+            "description": "Feedback about the detected language is shown in the lower right corner of text fields. Hide the feedback automatically after this many seconds.",
+            "type": "integer",
+            "value": 3
         }
     ]
 }

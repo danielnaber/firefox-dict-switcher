@@ -168,8 +168,7 @@ function detectAndSetLanguage(targetElement, text)
 
 function getDetectableLanguages()
 {
-    let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
-                               'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
+    let detectableLanguages = ['eng', 'spa', 'por', 'deu'];  // the four languages with variants that have a drop-down in our settings
     addAdditionalLanguages(detectableLanguages);
     removeDisabledLanguages(detectableLanguages);
     return detectableLanguages;

@@ -22,6 +22,9 @@
 //   Franc 1.1.0 (2 languages):
 //     For English: 13.3 chars, noCorrectGuessCount: 166
 //     For German: 12.7 chars, noCorrectGuessCount: 51
+//   Franc 1.1.0 (4 languages):
+//     For English: 14.9 chars, noCorrectGuessCount: 303
+//     For German: 13.5 chars, noCorrectGuessCount: 71
 //   Franc 1.1.0 (20 languages):
 //     For English: 16.5 chars, noCorrectGuessCount: 500, runtime 11sec
 //     For German: 12.7 chars, noCorrectGuessCount: 128, runtime 12sec
@@ -72,7 +75,9 @@ for (var line in lines) {
             var language = franc(shortened, 
                 {
                     // top 20:
-                    'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn', 'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur']
+                    //'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn', 'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur']
+                    // 4 languages with variants:
+                    'whitelist': ['spa', 'eng',  'por', 'deu']
                     // top 100:
                     //'whitelist': ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn', 'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur', 'urd', 'guj', 'pol', 'ukr', 'mai', 'mal', 'kan', 'mya', 'ori', 'gax', 'swh', 'sun', 'ron', 'pan', 'bho', 'amh', 'fuc', 'hau', 'bos', 'bos', 'hrv', 'nld', 'srp', 'srp', 'tha', 'ckb', 'yor', 'uzn', 'uzn', 'ibo', 'nep', 'ceb', 'skr', 'tgl', 'hun', 'azj', 'azj', 'sin', 'ell', 'ces', 'mag', 'bel', 'plt', 'mad', 'nya', 'qug', 'kin', 'zul', 'bul', 'swe', 'lin', 'som', 'hms', 'ilo', 'kaz', 'uig', 'uig', 'hat', 'khm', 'aka', 'aka', 'hil', 'pes', 'sna', 'tat', 'xho', 'hye', 'min', 'afr', 'lua', 'sat', 'bod', 'tir', 'fin', 'run', 'slk', 'tuk', 'tuk', 'dan', 'als']
                 });

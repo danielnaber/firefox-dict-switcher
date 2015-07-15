@@ -15,6 +15,7 @@
 
 const minimumCharacterLength = 25,
       feedBackDivRefreshRate = 100;
+      feedBackWaitText = "...";
 
 let userPreferences,
      // a div that shows feedback of detected language:
@@ -95,7 +96,7 @@ function detectAndSetLanguage(targetElement, text)
         var shortCode;
         if(language === "und")  // 'unknown'
         {
-            showFeedback(targetElement, "...", "Language not configured or need more characters to detect language");
+            showFeedback(targetElement, feedBackWaitText, "Language not configured or need more characters to detect language");
             return;
         }
         else
@@ -150,7 +151,7 @@ function detectAndSetLanguage(targetElement, text)
     }
     else
     {
-        showFeedback(targetElement, "...", "Need more characters to detect language");
+        showFeedback(targetElement, feedBackWaitText, "Need more characters to detect language");
         
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
@@ -239,15 +240,17 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     // Initialize the positioning loop
     setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
 
-    if (feedbackTimeout)
-    {
-        clearTimeout(feedbackTimeout);
+    // the feedback item can cover text, so hide it after some time (unless it's "...", i.e. not detection yet):
+    if (feedbackText !== feedBackWaitText) {
+        if (feedbackTimeout)
+        {
+            clearTimeout(feedbackTimeout);
+        }
+        let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
+        // TODO: not robust enough yet:
+        //feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
+        feedbackTimeout = setTimeout(function() {feedbackDiv.parentElement.removeChild(feedbackDiv)}, feedbackHideSeconds);
     }
-    // the feedback item can cover text, so hide it after some time:
-    let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
-    // TODO: not robust enough yet:
-    //feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
-    feedbackTimeout = setTimeout(function() {feedbackDiv.parentElement.removeChild(feedbackDiv)}, feedbackHideSeconds);
 }
 
 function fadeOut(el)

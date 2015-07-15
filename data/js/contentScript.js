@@ -212,9 +212,9 @@ function removeDisabledLanguages(detectableLanguages)
 function showFeedback(element, feedbackText, feedbackTitle, isWarning)
 {
 
-    if (feedbackDiv.textContent === feedbackText)
+    if (feedbackDiv.textContent === feedbackText && feedbackText !== feedBackWaitText)
     {
-        // don't always show the same feedback after is has been hidden
+        // don't always show the same feedback after it has been hidden
         return;
     }
 

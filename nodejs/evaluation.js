@@ -19,6 +19,9 @@
 //     For English: 23.8 chars, noCorrectGuessCount: 1042, runtime 52secs
 //     For German: 24.9 chars, noCorrectGuessCount: 610, runtime 62secs
 //
+//   Franc 1.1.0 (2 languages):
+//     For English: 13.3 chars, noCorrectGuessCount: 166
+//     For German: 12.7 chars, noCorrectGuessCount: 51
 //   Franc 1.1.0 (20 languages):
 //     For English: 16.5 chars, noCorrectGuessCount: 500, runtime 11sec
 //     For German: 12.7 chars, noCorrectGuessCount: 128, runtime 12sec
@@ -43,6 +46,7 @@ var lineCount = 0;
 var minCorrectCharsTotal = 0;
 var minCorrectCharsCount = 0;
 var noCorrectGuessCount = 0;
+var noCorrectGuessCharsTotal = 0;
 for (var line in lines) {
     var text = lines[line];
     console.log(lineCount + ". --------------------------------------");
@@ -88,12 +92,13 @@ for (var line in lines) {
         minCorrectCharsTotal += minCorrectChars;
         minCorrectCharsCount++;
     } else {
-        console.log("No correct guess");
+        console.log("No correct guess: " + text);
         noCorrectGuessCount++;
+        noCorrectGuessCharsTotal += text.length;
     }
     lineCount++;
 }
 
 console.log("===========================");
 console.log("minCorrectChars avg: " + (minCorrectCharsTotal/minCorrectCharsCount));
-console.log("noCorrectGuessCount: " + noCorrectGuessCount);
+console.log("noCorrectGuessCount: " + noCorrectGuessCount + " (" + (noCorrectGuessCharsTotal/noCorrectGuessCount) + " chars on avg.)");

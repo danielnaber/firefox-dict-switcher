@@ -15,21 +15,20 @@
 
 const minimum_character_length = 25;
 
-// Variable to store user preferences
 let userPreferences,
-// A div that shows feedback of detected language:
+     // a div that shows feedback of detected language:
     feedbackDiv = document.createElement("div"),
-    // In this variable we keep a reference to the input element which the addon operates on currently
+    // input element which the addon operates on currently (e.g. textarea):
     currentInputElement,
     ignoreSignature;
 
-// Initialize the feedback div. It has our unique id
+// Initialize the feedback div. It has our unique id:
 feedbackDiv.id = "danielnaber-firefox-dict-switcher-tooltip";
 
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
 {
-    // We require the presence of user preferences just to know the languages for which the user chosen "Don't
+    // We require the presence of user preferences just to know the languages for which the user chose "Don't
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
     ignoreSignature = userPreferences["ignoreSignature"];
@@ -51,7 +50,6 @@ function detectAndSetLanguage(targetElement, text)
     // attribute stays false.
     // I set the developerDisabledSpellChecking to indicate this case
     // (see how the firefoxDictSwitcherDisabledSpellCheck flag is set later)
-    // I use === because I'm not sure if this attribute accepts only booleans
     const developerDisabledSpellChecking = targetElement.spellcheck === false &&
                                           !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
@@ -77,6 +75,7 @@ function detectAndSetLanguage(targetElement, text)
     {
         //const startTime = performance.now();
 
+        // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = getDetectableLanguages();
         
         var language;
@@ -127,7 +126,7 @@ function detectAndSetLanguage(targetElement, text)
             // If the language was detected successfully enable spell checking and send its code to the main script
             if(!developerDisabledSpellChecking)
             {
-                // We enable spell checking only if the attribute wasn't already set to false be the page developer
+                // We enable spell checking only if the attribute wasn't already set to false by the page developer
                 targetElement.spellcheck = true;
             }
 
@@ -166,7 +165,6 @@ function detectAndSetLanguage(targetElement, text)
 
 function getDetectableLanguages()
 {
-    // Looks like we have enough text to reliably detect the language.
     let detectableLanguages = ['cmn', 'spa', 'eng', 'rus', 'arb', 'ben', 'hin', 'por', 'ind', 'jpn',
                                'fra', 'deu', 'jav', 'kor', 'tel', 'vie', 'mar', 'ita', 'tam', 'tur'];
     addAdditionalLanguages(detectableLanguages);
@@ -245,15 +243,14 @@ function positionFeedbackDiv()
     if(!parentElement)
         return;
 
-    const elementClientRect = currentInputElement.getBoundingClientRect(),
-          leftPos = elementClientRect.left + elementClientRect.width - feedbackDiv.clientWidth - 18,
-          topPos = elementClientRect.top + elementClientRect.height - feedbackDiv.clientHeight - 5;
+    const leftPos = currentInputElement.getBoundingClientRect().left + window.scrollX + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
+          topPos = currentInputElement.getBoundingClientRect().top + window.scrollY + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
 
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";
 
-    // Keep the loop going
-    requestAnimationFrame(positionFeedbackDiv);
+    // Keep the loop going but don't waste CPU:
+    setTimeout(function() {requestAnimationFrame(positionFeedbackDiv);}, 100);
 }
 
 function isEligible(element)

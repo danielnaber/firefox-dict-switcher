@@ -13,7 +13,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-const minimum_character_length = 25;
+const minimum_character_length = 25,
+      feedBackDivRefreshRate = 100;
 
 let userPreferences,
      // a div that shows feedback of detected language:
@@ -212,12 +213,12 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     if(feedbackDiv.parentElement)
         feedbackDiv.parentElement.removeChild(feedbackDiv);
 
-    const parentElement = element.offsetParent;
+    //const parentElement = element.offsetParent;
 
-    // offsetParent is null if the element itself is hidden. If the element is hidden we exit as, of course,
-    // we won't show feedback on a hidden element
-    if(!parentElement)
-        return;
+    //// offsetParent is null if the element itself is hidden. If the element is hidden we exit as, of course,
+    //// we won't show feedback on a hidden element
+    //if(!parentElement)
+    //    return;
 
     currentInputElement = element;
 
@@ -231,8 +232,11 @@ function showFeedback(element, feedbackText, feedbackTitle, isWarning)
     
     document.body.appendChild(feedbackDiv);
 
+    // Instantly position the feedback div
+    positionFeedbackDiv();
+
     // Initialize the positioning loop
-    requestAnimationFrame(positionFeedbackDiv);
+    setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
 }
 
 // This function keeps the feedback div always positioned properly relative to 
@@ -243,14 +247,15 @@ function positionFeedbackDiv()
     if(!parentElement)
         return;
 
-    const leftPos = currentInputElement.getBoundingClientRect().left + window.scrollX + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
-          topPos = currentInputElement.getBoundingClientRect().top + window.scrollY + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
+    const clientRect = currentInputElement.getBoundingClientRect(),
+          leftPos = clientRect.left + window.scrollX + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
+          topPos = clientRect.top + window.scrollY + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
 
     feedbackDiv.style.left = leftPos + "px";
     feedbackDiv.style.top = topPos + "px";
 
-    // Keep the loop going but don't waste CPU:
-    setTimeout(function() {requestAnimationFrame(positionFeedbackDiv);}, 100);
+    // Keep the loop going but don't waste CPU
+    setTimeout(positionFeedbackDiv, feedBackDivRefreshRate);
 }
 
 function isEligible(element)

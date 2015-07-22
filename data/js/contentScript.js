@@ -306,9 +306,12 @@ function positionFeedbackDiv()
 
 function isEligible(element)
 {
-    // The addon operates only on textarea elements or elements with the contentEditable attribute set
+    // The addon operates only on textarea elements or elements with the contentEditable attribute set.
+    // If the body itself is contentEditable we have to give up, as that would mean we put our feedback
+    // div in the editable area and that causes a mess (happened on languagetool.org, where the text
+    // area is a contentEditable body inside an iframe):
     return element.tagName == "TEXTAREA" ||
-           element.contentEditable === 'true';
+          (element.contentEditable === 'true' && element.tagName !== "BODY");
 }
 
 // Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead

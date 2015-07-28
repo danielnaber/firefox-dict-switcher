@@ -14,7 +14,7 @@
 //   limitations under the License.
 
 const minimumCharacterLength = 25,
-      feedbackDivRefreshRate = 250;
+      feedbackDivRefreshRate = 250,
       feedbackWaitText = "...";
 
 let userPreferences,
@@ -308,7 +308,7 @@ function isEligible(element)
 {
     // The addon operates only on textarea elements or elements with the contentEditable attribute set
     return element.tagName == "TEXTAREA" ||
-           element.contentEditable === 'true';
+           element.isContentEditable;
 }
 
 // Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead

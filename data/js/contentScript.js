@@ -15,7 +15,9 @@
 
 const minimumCharacterLength = 25,
       feedbackDivRefreshRate = 250,
-      feedbackWaitText = "...";
+      feedbackWaitText = "...",
+      // The regex is obtained from http://www.regexlib.com/REDetails.aspx?regexp_id=146
+      filterRegEx = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*/gi;
 
 let userPreferences,
      // a div that shows feedback of detected language:
@@ -58,7 +60,8 @@ function detectAndSetLanguage(targetElement, text)
 
     // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
     // the element itself
-    text = text || targetElement.value || targetElement.textContent;
+    // Also, per issue #15, we remove URLs from the text
+    text = (text || targetElement.value || targetElement.textContent).replace(filterRegEx, "");
 
     if(ignoreSignature)
     {

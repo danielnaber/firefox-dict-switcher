@@ -9,7 +9,7 @@
         "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
         "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
     ],
-    "license": "Apache-2.0",
+    "license": "MPL-2.0",
     "version": "0.4.1",
     "permissions": { "private-browsing": true },
     "preferences": [

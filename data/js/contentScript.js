@@ -89,6 +89,7 @@ function detectAndSetLanguage(targetElement, text)
         }
 
         var shortCode;
+        var langName;
         if(language === "und")  // 'unknown'
         {
             showFeedback(targetElement, feedbackWaitText, "Language not configured or need more characters to detect language");
@@ -103,6 +104,7 @@ function detectAndSetLanguage(targetElement, text)
                 return;
             }
             shortCode = languageInfo.iso6391;
+            langName = languageInfo.name;
         }
 
         //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
@@ -128,7 +130,7 @@ function detectAndSetLanguage(targetElement, text)
                 targetElement.spellcheck = true;
             }
 
-            self.port.emit("changeDictionary", shortCode);
+            self.port.emit("changeDictionary", shortCode, langName);
 
             return;
         }

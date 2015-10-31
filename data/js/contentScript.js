@@ -11,7 +11,6 @@ const minimumCharacterLength = 25,
 
 let userPreferences,
     // input element which the addon operates on currently (e.g. textarea):
-    currentInputElement,
     ignoreSignature;
 
 // Listen to a message from the main script containing user preferences
@@ -80,14 +79,6 @@ function detectAndSetLanguage(targetElement, text) {
         }
         //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-        // We won't show the feedback tooltip until the main script sends us the language dialect that
-        // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
-        // for the input element the user currently edits so that we can show the feedback tooltip on it
-        // later.
-        // Notice that we are either passed targetElement as a parameter or use the current activeElement
-        // (in case of paste events only)
-        currentInputElement = targetElement || document.activeElement;
-
         // If the language was detected successfully enable spell checking and send its code to the main script
         if(!developerDisabledSpellChecking) {
             // We enable spell checking only if the attribute wasn't already set to false by the page developer
@@ -133,7 +124,7 @@ function removeDisabledLanguages(detectableLanguages)
         { short: 'es', long: 'spa' },
         { short: 'de', long: 'deu' },
         { short: 'pt', long: 'por' } ];  // these have variants and a "Don't detect this language" option in the settings
-    for (let idx in potentiallyDisabledLanguages) {
+    for (var idx in potentiallyDisabledLanguages) {
         let shortCode = potentiallyDisabledLanguages[idx].short;
         if (userPreferences[shortCode] === '-') {
             let longCode = potentiallyDisabledLanguages[idx].long;

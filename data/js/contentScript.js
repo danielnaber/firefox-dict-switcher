@@ -6,21 +6,13 @@
 // http://mozilla.org/MPL/2.0/.
 
 const minimumCharacterLength = 25,
-      feedbackDivRefreshRate = 250,
-      feedbackWaitText = "...",
       // The regex is obtained from http://www.regexlib.com/REDetails.aspx?regexp_id=146
       filterRegEx = /(http|https|ftp)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?\/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*/gi;
 
 let userPreferences,
-     // a div that shows feedback of detected language:
-    feedbackDiv = document.createElement("div"),
-    feedbackTimeout,
     // input element which the addon operates on currently (e.g. textarea):
     currentInputElement,
     ignoreSignature;
-
-// Initialize the feedback div. It has our unique id:
-feedbackDiv.id = "danielnaber-firefox-dict-switcher-tooltip";
 
 // Listen to a message from the main script containing user preferences
 self.port.on("config", function (prefs)
@@ -29,14 +21,6 @@ self.port.on("config", function (prefs)
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
     ignoreSignature = userPreferences["ignoreSignature"];
-});
-
-// The main script sends this message after it receives the detected language code, and found the language dialect
-// (ie. the dictionary) that will be used, or found that there's no dictionary for the detected language
-// See the changeDictionary function in main.js
-self.port.on("feedback", function (feedback)
-{
-    showFeedback(currentInputElement, feedback.language, feedback.message, feedback.isWarning);
 });
 
 function detectAndSetLanguage(targetElement, text)
@@ -72,10 +56,8 @@ function detectAndSetLanguage(targetElement, text)
     if(text.length > minimumCharacterLength)
     {
         //const startTime = performance.now();
-
         // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = getDetectableLanguages();
-        
         var language;
         try {
             language = franc(text,
@@ -84,7 +66,6 @@ function detectAndSetLanguage(targetElement, text)
                     'whitelist': detectableLanguages
                 });
         } catch (e) {
-            showFeedback(targetElement, "??", "Error: Could not detect language: " + e.toString(), true);
             return;
         }
 
@@ -92,7 +73,6 @@ function detectAndSetLanguage(targetElement, text)
         var langName;
         if(language === "und")  // 'unknown'
         {
-            showFeedback(targetElement, feedbackWaitText, "Language not configured or need more characters to detect language");
             return;
         }
         else
@@ -100,19 +80,17 @@ function detectAndSetLanguage(targetElement, text)
             var languageInfo = iso6393[language];
             if(!languageInfo)
             {
-                showFeedback(targetElement, "??", "Error: Could not find short language code for '" + language + "'", true);
                 return;
             }
             shortCode = languageInfo.iso6391;
             langName = languageInfo.name;
         }
-
         //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
         // If the language wasn't successfully identified
         // If the user chose to ignore the detected language (see the configs in package.json)
-        if(userPreferences[shortCode] == "-")
-            showFeedback(targetElement, "--", "Detected " + shortCode + " but it's disabled in configuration");
+        if(userPreferences[shortCode] == "-") {
+        }
         else
         {
             // We won't show the feedback tooltip until the main script sends us the language dialect that
@@ -148,8 +126,6 @@ function detectAndSetLanguage(targetElement, text)
     }
     else
     {
-        showFeedback(targetElement, feedbackWaitText, "Need more characters to detect language");
-        
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
 
@@ -205,101 +181,6 @@ function removeDisabledLanguages(detectableLanguages)
     }
 }
 
-function showFeedback(element, feedbackText, feedbackTitle, isWarning)
-{
-
-    if (feedbackDiv.textContent === feedbackText && feedbackText !== feedbackWaitText)
-    {
-        // don't always show the same feedback after it has been hidden
-        return;
-    }
-
-    // Detach the feedback div from the document if it were previously attached
-    if(feedbackDiv.parentElement)
-        feedbackDiv.parentElement.removeChild(feedbackDiv);
-
-    //const parentElement = element.offsetParent;
-
-    //// offsetParent is null if the element itself is hidden. If the element is hidden we exit as, of course,
-    //// we won't show feedback on a hidden element
-    //if(!parentElement)
-    //    return;
-
-    currentInputElement = element;
-
-    feedbackDiv.title = feedbackTitle + "\n(Automatic Dictionary Switcher Add-on for Firefox)";
-    feedbackDiv.textContent = feedbackText;
-
-    if(isWarning)
-        feedbackDiv.classList.add("firefox-dict-switcher-warning");
-    else
-        feedbackDiv.classList.remove("firefox-dict-switcher-warning");
-    
-    document.body.appendChild(feedbackDiv);
-
-    // Instantly position the feedback div
-    positionFeedbackDiv();
-
-    // Initialize the positioning loop
-    setTimeout(positionFeedbackDiv, feedbackDivRefreshRate);
-
-    // the feedback item can cover text, so hide it after some time (unless it's "...", i.e. not detection yet):
-    if (feedbackText !== feedbackWaitText) {
-        if (feedbackTimeout)
-        {
-            clearTimeout(feedbackTimeout);
-        }
-        let feedbackHideSeconds = userPreferences["feedbackHideSeconds"] * 1000;
-        // TODO: not robust enough yet:
-        //feedbackTimeout = setTimeout(function() {fadeOut(feedbackDiv)}, feedbackHideSeconds);
-        feedbackTimeout = setTimeout(function() {
-            if (feedbackDiv.parentElement)
-            {
-                feedbackDiv.parentElement.removeChild(feedbackDiv);
-            }
-        }, feedbackHideSeconds);
-    }
-}
-
-function fadeOut(el)
-{
-    el.style.opacity = 1;
-    (function fade()
-    {
-        if ((el.style.opacity -= 0.05) < 0)
-        {
-            if (feedbackDiv.parentElement)
-            {
-                feedbackDiv.parentElement.removeChild(feedbackDiv);
-                feedbackDiv.textContent = feedbackWaitText;
-                el.style.opacity = 1;
-            }
-        }
-        else
-        {
-            requestAnimationFrame(fade);
-        }
-    })();
-}
-
-// This function keeps the feedback div always positioned properly relative to 
-function positionFeedbackDiv()
-{
-    const parentElement = feedbackDiv.parentElement;
-
-    if(!parentElement)
-        return;
-
-    const clientRect = currentInputElement.getBoundingClientRect(),
-          leftPos = clientRect.left + window.scrollX + currentInputElement.offsetWidth - feedbackDiv.offsetWidth - 18,
-          topPos = clientRect.top + window.scrollY + currentInputElement.offsetHeight - feedbackDiv.offsetHeight - 5;
-
-    feedbackDiv.style.left = leftPos + "px";
-    feedbackDiv.style.top = topPos + "px";
-
-    // Keep the loop going but don't waste CPU
-    setTimeout(positionFeedbackDiv, feedbackDivRefreshRate);
-}
 
 function isEligible(element)
 {
@@ -336,18 +217,6 @@ document.documentElement.addEventListener("focus", function (evt)
     // Set correct language when we set the focus to already filled textarea
     if(isEligible(evt.target))
         detectAndSetLanguage(evt.target);
-}, true);
-
-// HACK: The blur event doesn't bubble, so I set the useCapture parameter of addEventListener to true.
-// We should use the focusout event which bubbles but it's not supported on Firefox as of the date I wrote this.
-// See the note on this article https://developer.mozilla.org/en-US/docs/Web/Events/focusout
-document.documentElement.addEventListener("blur", function (evt)
-{
-    // When the focus gets out of an element, detach the feedback div from the document
-    if(feedbackDiv.parentElement)
-        feedbackDiv.parentElement.removeChild(feedbackDiv);
-        // when user enters field later, feedback will be shown again:
-        feedbackDiv.textContent = feedbackWaitText;
 }, true);
 
 document.documentElement.addEventListener("paste", function (e)

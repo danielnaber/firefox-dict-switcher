@@ -39,7 +39,6 @@ function detectAndSetLanguage(targetElement, text) {
 
     if(ignoreSignature) {
         let signatureDelimiterPos = text.indexOf("-- \n");
-
         if(signatureDelimiterPos >= 0) {
             // cut off signature: it may be written in a different language than
             // the main text and would thus decrease language detection quality:
@@ -49,7 +48,7 @@ function detectAndSetLanguage(targetElement, text) {
 
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
-    if(text.length > minimumCharacterLength) {
+    if(text.length >= minimumCharacterLength) {
         //const startTime = performance.now();
         // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = getDetectableLanguages();
@@ -61,16 +60,19 @@ function detectAndSetLanguage(targetElement, text) {
                     'whitelist': detectableLanguages
                 });
         } catch (e) {
+            self.port.emit("showFeedbackInToolbar", "?", "Error: " + e.toString(), false);
             return;
         }
 
         var shortCode;
         var langName;
         if(language === "und") {  // 'unknown'
+            self.port.emit("showFeedbackInToolbar", "?", "Could not detect language", false);
             return;
         } else {
             var languageInfo = iso6393[language];
             if(!languageInfo) {
+                self.port.emit("showFeedbackInToolbar", "?", "Could not find language for code " + language, false);
                 return;
             }
             shortCode = languageInfo.iso6391;
@@ -78,51 +80,33 @@ function detectAndSetLanguage(targetElement, text) {
         }
         //console.log(`Detected language code is (${language}) in ${performance.now() - startTime} ms`);
 
-        // If the language wasn't successfully identified
-        // If the user chose to ignore the detected language (see the configs in package.json)
-        if(userPreferences[shortCode] == "-") {
-            //
-        } else {
-            // We won't show the feedback tooltip until the main script sends us the language dialect that
-            // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
-            // for the input element the user currently edits so that we can show the feedback tooltip on it
-            // later.
-            // Notice that we are either passed targetElement as a parameter or use the current activeElement
-            // (in case of paste events only)
-            currentInputElement = targetElement || document.activeElement;
+        // We won't show the feedback tooltip until the main script sends us the language dialect that
+        // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
+        // for the input element the user currently edits so that we can show the feedback tooltip on it
+        // later.
+        // Notice that we are either passed targetElement as a parameter or use the current activeElement
+        // (in case of paste events only)
+        currentInputElement = targetElement || document.activeElement;
 
-            // If the language was detected successfully enable spell checking and send its code to the main script
-            if(!developerDisabledSpellChecking) {
-                // We enable spell checking only if the attribute wasn't already set to false by the page developer
-                targetElement.spellcheck = true;
-            }
-            self.port.emit("changeDictionary", shortCode, langName);
-            return;
-        }
-
-        // Disable spell checking...
-        targetElement.spellcheck = false;
-
-        // ...send null to indicate to the main script that either we failed to detect or the language is disabled...
-        //self.port.emit("changeDictionary", null);
-
-        // ...and set a flag to indicate that it's our code who disabled spell checking not the page developer's
-        // We do so only if the attribute wasn't already set to false be the page developer
+        // If the language was detected successfully enable spell checking and send its code to the main script
         if(!developerDisabledSpellChecking) {
-            targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
+            // We enable spell checking only if the attribute wasn't already set to false by the page developer
+            targetElement.spellcheck = true;
         }
+        self.port.emit("changeDictionary", shortCode, langName);
+
     } else {
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
-
-        // Sending null to the main script also indicates that the input text is too short to detect the language
-        self.port.emit("changeDictionary", null);
 
         // And set a flag to indicate that it's our code who disabled spell checking not the page developer's
         // We do so only if the attribute wasn't already set to false be the page developer
         if(!developerDisabledSpellChecking) {
             targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
         }
+
+        // Sending null to the main script also indicates that the input text is too short to detect the language
+        self.port.emit("showFeedbackInToolbar", "...", "Need at least " + minimumCharacterLength + " characters to detect language", false);
     }
 }
 

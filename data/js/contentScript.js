@@ -15,16 +15,14 @@ let userPreferences,
     ignoreSignature;
 
 // Listen to a message from the main script containing user preferences
-self.port.on("config", function (prefs)
-{
+self.port.on("config", function (prefs) {
     // We require the presence of user preferences just to know the languages for which the user chose "Don't
     // detect this language" option so that we disable spell checking if we encountered text in these languages
     userPreferences = prefs;
     ignoreSignature = userPreferences["ignoreSignature"];
 });
 
-function detectAndSetLanguage(targetElement, text)
-{
+function detectAndSetLanguage(targetElement, text) {
     // If spell checking was disabled by the page developer, we honor the setting and don't set the value of
     // the spellcheck attribute to true, but we still try to detect the language and keep the ordinary operation
     // of the addon because the user can manually enable spell checking from the context menu, and the spellcheck
@@ -39,12 +37,10 @@ function detectAndSetLanguage(targetElement, text)
     // Also, per issue #15, we remove URLs from the text
     text = (text || targetElement.value || targetElement.textContent).replace(filterRegEx, "");
 
-    if(ignoreSignature)
-    {
+    if(ignoreSignature) {
         let signatureDelimiterPos = text.indexOf("-- \n");
 
-        if(signatureDelimiterPos >= 0)
-        {
+        if(signatureDelimiterPos >= 0) {
             // cut off signature: it may be written in a different language than
             // the main text and would thus decrease language detection quality:
             text = text.substring(0, signatureDelimiterPos);
@@ -53,8 +49,7 @@ function detectAndSetLanguage(targetElement, text)
 
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
-    if(text.length > minimumCharacterLength)
-    {
+    if(text.length > minimumCharacterLength) {
         //const startTime = performance.now();
         // Looks like we have enough text to reliably detect the language.
         let detectableLanguages = getDetectableLanguages();
@@ -71,15 +66,11 @@ function detectAndSetLanguage(targetElement, text)
 
         var shortCode;
         var langName;
-        if(language === "und")  // 'unknown'
-        {
+        if(language === "und") {  // 'unknown'
             return;
-        }
-        else
-        {
+        } else {
             var languageInfo = iso6393[language];
-            if(!languageInfo)
-            {
+            if(!languageInfo) {
                 return;
             }
             shortCode = languageInfo.iso6391;
@@ -90,9 +81,8 @@ function detectAndSetLanguage(targetElement, text)
         // If the language wasn't successfully identified
         // If the user chose to ignore the detected language (see the configs in package.json)
         if(userPreferences[shortCode] == "-") {
-        }
-        else
-        {
+            //
+        } else {
             // We won't show the feedback tooltip until the main script sends us the language dialect that
             // will be used, and whether or not it found a dictionary for this dialect, so, keep a reference
             // for the input element the user currently edits so that we can show the feedback tooltip on it
@@ -102,14 +92,11 @@ function detectAndSetLanguage(targetElement, text)
             currentInputElement = targetElement || document.activeElement;
 
             // If the language was detected successfully enable spell checking and send its code to the main script
-            if(!developerDisabledSpellChecking)
-            {
+            if(!developerDisabledSpellChecking) {
                 // We enable spell checking only if the attribute wasn't already set to false by the page developer
                 targetElement.spellcheck = true;
             }
-
             self.port.emit("changeDictionary", shortCode, langName);
-
             return;
         }
 
@@ -121,11 +108,10 @@ function detectAndSetLanguage(targetElement, text)
 
         // ...and set a flag to indicate that it's our code who disabled spell checking not the page developer's
         // We do so only if the attribute wasn't already set to false be the page developer
-        if(!developerDisabledSpellChecking)
+        if(!developerDisabledSpellChecking) {
             targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
-    }
-    else
-    {
+        }
+    } else {
         // Because we can't detect the language, disable spell checking
         targetElement.spellcheck = false;
 
@@ -134,26 +120,23 @@ function detectAndSetLanguage(targetElement, text)
 
         // And set a flag to indicate that it's our code who disabled spell checking not the page developer's
         // We do so only if the attribute wasn't already set to false be the page developer
-        if(!developerDisabledSpellChecking)
+        if(!developerDisabledSpellChecking) {
             targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck = "1";
+        }
     }
 }
 
-function getDetectableLanguages()
-{
+function getDetectableLanguages() {
     let detectableLanguages = ['eng', 'spa', 'por', 'deu'];  // the four languages with variants that have a drop-down in our settings
     addAdditionalLanguages(detectableLanguages);
     removeDisabledLanguages(detectableLanguages);
     return detectableLanguages;
 }
 
-function addAdditionalLanguages(detectableLanguages)
-{
-    for (var i = 1; i <= 3; i++)
-    {
+function addAdditionalLanguages(detectableLanguages) {
+    for (var i = 1; i <= 3; i++) {
         let additionalLanguage = userPreferences["additionalLanguage"+i];
-        if (additionalLanguage && additionalLanguage !== '-')
-        {
+        if (additionalLanguage && additionalLanguage !== '-') {
             detectableLanguages.push(additionalLanguage);
         }
     }
@@ -166,15 +149,12 @@ function removeDisabledLanguages(detectableLanguages)
         { short: 'es', long: 'spa' },
         { short: 'de', long: 'deu' },
         { short: 'pt', long: 'por' } ];  // these have variants and a "Don't detect this language" option in the settings
-    for (let idx in potentiallyDisabledLanguages)
-    {
+    for (let idx in potentiallyDisabledLanguages) {
         let shortCode = potentiallyDisabledLanguages[idx].short;
-        if (userPreferences[shortCode] === '-')
-        {
+        if (userPreferences[shortCode] === '-') {
             let longCode = potentiallyDisabledLanguages[idx].long;
             let pos = detectableLanguages.indexOf(longCode);
-            if (pos > -1)
-            {
+            if (pos > -1) {
                 detectableLanguages.splice(pos, 1);
             }
         }
@@ -182,8 +162,7 @@ function removeDisabledLanguages(detectableLanguages)
 }
 
 
-function isEligible(element)
-{
+function isEligible(element) {
     // The addon operates only on textarea elements or elements with the contentEditable attribute set.
     // If the body itself is contentEditable we have to give up, as that would mean we put our feedback
     // div in the editable area and that causes a mess (happened on languagetool.org, where the text
@@ -195,15 +174,11 @@ function isEligible(element)
 // Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead
 // used event delegation by attaching event handlers only to the root element. This is better for performance
 // and covers the elements that are later appended to the DOM
-document.documentElement.addEventListener("keydown", function (evt)
-{
-    if(isEligible(evt.target))
-    {
+document.documentElement.addEventListener("keydown", function (evt) {
+    if(isEligible(evt.target)) {
         var key = evt.keyCode || evt.charCode;
-
         // check if user has finished entering a word
-        if(key == 32/*space*/ || key == 188/*comma*/ || key == 190/*dot*/)
-        {
+        if(key == 32/*space*/ || key == 188/*comma*/ || key == 190/*dot*/) {
             detectAndSetLanguage(evt.target);
         }
     }
@@ -212,22 +187,21 @@ document.documentElement.addEventListener("keydown", function (evt)
 // HACK: The focus event doesn't bubble, so I set the useCapture parameter of addEventListener to true.
 // We should use the focusin event which bubbles but it's not supported on Firefox as of the date I wrote this.
 // See the note on this article https://developer.mozilla.org/en-US/docs/Web/Events/focusin
-document.documentElement.addEventListener("focus", function (evt)
-{
+document.documentElement.addEventListener("focus", function (evt) {
     // Set correct language when we set the focus to already filled textarea
-    if(isEligible(evt.target))
+    if(isEligible(evt.target)) {
         detectAndSetLanguage(evt.target);
+    }
 }, true);
 
 document.documentElement.addEventListener("paste", function (e)
 {
     // We act only when data is pasted on a TEXTAREA element
-    if(isEligible(e.target))
-    {
+    if(isEligible(e.target)) {
         // We try to detect only if the pasted data is available in plain text format
         const text = e.clipboardData.getData("text/plain");
-
-        if(text)
+        if(text) {
             detectAndSetLanguage(e.target, text);
+        }
     }
 });

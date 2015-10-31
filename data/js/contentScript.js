@@ -31,11 +31,6 @@ function detectAndSetLanguage(targetElement, text) {
     const developerDisabledSpellChecking = targetElement.spellcheck === false &&
                                           !targetElement.dataset.firefoxDictSwitcherDisabledSpellCheck;
 
-    // text is an optional parameter used when handling the paste event only. Otherwise, we read the text from
-    // the element itself
-    // Also, per issue #15, we remove URLs from the text
-    text = (text || targetElement.value || targetElement.textContent).replace(filterRegEx, "");
-
     if(ignoreSignature) {
         let signatureDelimiterPos = text.indexOf("-- \n");
         if(signatureDelimiterPos >= 0) {
@@ -45,33 +40,30 @@ function detectAndSetLanguage(targetElement, text) {
         }
     }
 
+    // Remove URLs from text (issue #15):
+    text = text.replace(filterRegEx, "");
+    
     // we are only going to check language if there is some amount of text available as
     // that will increase our chances of detecting language correctly.
     if(text.length >= minimumCharacterLength) {
         //const startTime = performance.now();
         // Looks like we have enough text to reliably detect the language.
-        let detectableLanguages = getDetectableLanguages();
-        var language;
+        var francLangCode;
         try {
-            language = franc(text,
-                {
-                    // top 20 + user settings:
-                    'whitelist': detectableLanguages
-                });
+            francLangCode = franc(text, { whitelist: getDetectableLanguages() });
         } catch (e) {
             self.port.emit("showFeedbackInToolbar", "?", "Error: " + e.toString(), false);
             return;
         }
-
         var shortCode;
         var langName;
-        if(language === "und") {  // 'unknown'
+        if(francLangCode === "und") {  // franc's code for 'unknown'
             self.port.emit("showFeedbackInToolbar", "?", "Could not detect language", false);
             return;
         } else {
-            var languageInfo = iso6393[language];
+            var languageInfo = iso6393[francLangCode];
             if(!languageInfo) {
-                self.port.emit("showFeedbackInToolbar", "?", "Could not find language for code " + language, false);
+                self.port.emit("showFeedbackInToolbar", "?", "Could not find language for code " + francLangCode, false);
                 return;
             }
             shortCode = languageInfo.iso6391;
@@ -154,7 +146,8 @@ document.documentElement.addEventListener("keydown", function (evt) {
         var key = evt.keyCode || evt.charCode;
         // check if user has finished entering a word
         if(key == 32/*space*/ || key == 188/*comma*/ || key == 190/*dot*/) {
-            detectAndSetLanguage(evt.target);
+            let text = evt.target.value || evt.target.textContent;
+            detectAndSetLanguage(evt.target, text);
         }
     }
 });
@@ -165,7 +158,8 @@ document.documentElement.addEventListener("keydown", function (evt) {
 document.documentElement.addEventListener("focus", function (evt) {
     // Set correct language when we set the focus to already filled textarea
     if(isEligible(evt.target)) {
-        detectAndSetLanguage(evt.target);
+        let text = evt.target.value || evt.target.textContent;
+        detectAndSetLanguage(evt.target, text);
     }
 }, true);
 
@@ -174,7 +168,7 @@ document.documentElement.addEventListener("paste", function (e)
     // We act only when data is pasted on a TEXTAREA element
     if(isEligible(e.target)) {
         // We try to detect only if the pasted data is available in plain text format
-        const text = e.clipboardData.getData("text/plain");
+        let text = e.clipboardData.getData("text/plain");
         if(text) {
             detectAndSetLanguage(e.target, text);
         }

@@ -39,8 +39,10 @@ function setSpellChecking(spellChecking) {
 }
 
 function isEligible(element) {
-    // The addon operates only on textarea elements or elements with the contentEditable attribute set.
-    return element.tagName == "TEXTAREA" || element.isContentEditable;
+    // The addon operates only on these elements:
+    return element.tagName == "TEXTAREA" ||
+           element.isContentEditable || 
+           (element.tagName == "INPUT" && (element.getAttribute("type") == "text" || !element.getAttribute("type")));
 }
 
 document.documentElement.addEventListener("keydown", function (evt) {

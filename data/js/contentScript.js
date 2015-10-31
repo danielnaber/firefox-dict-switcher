@@ -10,9 +10,6 @@ function isEligible(element) {
     return element.tagName == "TEXTAREA" || element.isContentEditable;
 }
 
-// Note from Ashraf: I commented the old code that initially iterates over all TEXTAREA elements and instead
-// used event delegation by attaching event handlers only to the root element. This is better for performance
-// and covers the elements that are later appended to the DOM
 document.documentElement.addEventListener("keydown", function (evt) {
     if(isEligible(evt.target)) {
         var key = evt.keyCode || evt.charCode;
@@ -36,7 +33,6 @@ document.documentElement.addEventListener("focus", function (evt) {
 }, true);
 
 document.documentElement.addEventListener("paste", function (e) {
-    // We act only when data is pasted on a TEXTAREA element
     if(isEligible(e.target)) {
         // We try to detect only if the pasted data is available in plain text format
         let text = e.clipboardData.getData("text/plain");

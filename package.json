@@ -10,7 +10,7 @@
         "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
     ],
     "license": "MPL-2.0",
-    "version": "0.5",
+    "version": "0.5.1",
     "permissions": { "private-browsing": true },
     "preferences": [
         {

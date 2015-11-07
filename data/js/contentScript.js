@@ -78,6 +78,8 @@ document.documentElement.addEventListener("focus", function (evt) {
     // Set correct language when we set the focus to already filled textarea
     if(isEligible(evt.target)) {
         currentTarget = evt.target;
+        // TODO: evt.target.textContent seems to be non-empty even when the field
+        // has been cleared (e.g. with Ctrl+A, backspace):
         let text = evt.target.value || evt.target.textContent;
         self.port.emit("detectLanguage", text);
         evt.target.addEventListener("blur", function (evt) {

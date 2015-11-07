@@ -45,6 +45,20 @@ function isEligible(element) {
            (element.tagName == "INPUT" && (element.getAttribute("type") == "text" || !element.getAttribute("type")));
 }
 
+// This is needed because a page may use 'autofocus' to
+// set focus and the 'focus' event listener we add below
+// doesn't work reliably in that case:
+if(document.activeElement && isEligible(document.activeElement)) {
+    if (document.activeElement.value) {
+        currentTarget = document.activeElement;
+        self.port.emit("detectLanguage", document.activeElement.value);
+    } else if (document.activeElement.textContent) {
+        // fields with contentEditable=true (e.g. on languagetool.org):
+        currentTarget = document.activeElement;
+        self.port.emit("detectLanguage", document.activeElement.textContent);
+    }
+}
+
 document.documentElement.addEventListener("keydown", function (evt) {
     if(isEligible(evt.target)) {
         var key = evt.keyCode || evt.charCode;

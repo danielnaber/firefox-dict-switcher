@@ -80,6 +80,9 @@ document.documentElement.addEventListener("focus", function (evt) {
         currentTarget = evt.target;
         let text = evt.target.value || evt.target.textContent;
         self.port.emit("detectLanguage", text);
+        evt.target.addEventListener("blur", function (evt) {
+            self.port.emit("resetFeedbackInToolbar");
+        });
     }
 }, true);
 

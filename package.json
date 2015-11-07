@@ -3,14 +3,14 @@
     "title": "Automatic Dictionary Switcher",
     "id": "firefox-dict-switcher@danielnaber.de",
     "icon": "data/img/dictionary.png",
-    "description": "Based on the text entered in a textarea, this add-on automatically detects the language and sets the corresponding spell checking dictionary. You need to type at least 25 characters before the add-on will start. Before that limit is reached, it disables spell checking. A small icon in the lower right corner of the textarea will give you feedback about the language that has been detected. The icon will disappear a few seconds after a language has been detected.",
+    "description": "Based on the text entered in a textarea, this add-on automatically detects the language and sets the corresponding spell checking dictionary. You need to type at least 25 characters before the add-on will start. Before that limit is reached, it disables spell checking. The add-on's icon will give you feedback about the language that has been detected.",
     "author": "Daniel Naber",
     "contributors": [
         "viraniac (https://www.freelancer.com/u/viraniacreturns.html)",
         "Ashraf Sabry (https://about.me/ashraf_sabry_m)"
     ],
     "license": "MPL-2.0",
-    "version": "0.4.3",
+    "version": "0.5",
     "permissions": { "private-browsing": true },
     "preferences": [
         {

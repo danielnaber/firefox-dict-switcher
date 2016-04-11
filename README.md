@@ -1,5 +1,7 @@
 # Automatic Dictionary Switcher Add-on for Firefox
 
+**This add-on does not work and is not available on addons.mozilla.org until https://bugzilla.mozilla.org/show_bug.cgi?id=1240536 is fixed**
+
 Based on the text entered in a textarea, this add-on automatically detects the
 language and sets the corresponding spell checking dictionary. You need to type
 at least 25 characters before the add-on will start. Before that limit is

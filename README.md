@@ -1,6 +1,10 @@
 # Automatic Dictionary Switcher Add-on for Firefox
 
-**[Try this extension instead](https://github.com/kimsey0/FirefoxAutoDict) -- (This add-on does not work and is not available on addons.mozilla.org until https://bugzilla.mozilla.org/show_bug.cgi?id=1240536 is fixed)**
+**NOTICE** This add-on does not work pending a [bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1240536) and is therefore not available as an add-on for Firefox. Please, see the following alternatives:
+* [Automatic Spelling Language](https://addons.mozilla.org/en-US/firefox/addon/automatic-spelling-language/) for Firefox
+* [Automatic Dictionary](https://addons.thunderbird.net/en-US/thunderbird/addon/automatic-dictionary-switching/) for Thunderbird
+
+**END OF NOTICE**
 
 Based on the text entered in a textarea, this add-on automatically detects the
 language and sets the corresponding spell checking dictionary. You need to type
